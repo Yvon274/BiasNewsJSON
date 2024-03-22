@@ -33,8 +33,8 @@ else:
 nltk.download('vader_lexicon')
 
 sid = SentimentIntensityAnalyzer()
-left_keywords = ['liberal', 'progressive', 'socialist', 'equality', 'justice', 'Biden', 'Ukraine']
-right_keywords = ['conservative', 'capitalist', 'free market', 'individual freedom', 'traditional values', 'Trump']
+left_keywords_int = ['liberal', 'progressive', 'socialist', 'equality', 'justice', 'biden', 'Ukraine']
+right_keywords_int = ['conservative', 'capitalist', 'free market', 'individual freedom', 'traditional values', 'Trump']
 
 def determine_political_leaning(text):
     # Sentiment analysis
@@ -46,6 +46,9 @@ def determine_political_leaning(text):
     
     # Keyword analysis
     tokens = text.lower().split()
+
+    left_keywords = [word.lower() for word in left_keywords_int]
+    right_keywords = [word.lower() for word in right_keywords_int]
     left_score = sum(token in left_keywords for token in tokens)
     right_score = sum(token in right_keywords for token in tokens)
     
@@ -71,7 +74,7 @@ def determine_political_leaning(text):
       result = sentiment_score * sentiment_weight + keywords * keyword_weight
     return result
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
-filtered_df = articles_df[articles_df['text'].str.contains("thanks biden", case=False)]
+
 
 app = Flask(__name__)
 CORS(app)
