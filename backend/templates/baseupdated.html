@@ -1,0 +1,70 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - Flaskr</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<body>
+  <header>
+    <div class="nav-left">
+      <p class="nav-icon">BFN</p>
+    </div>
+    <div class="nav-right">
+      <a href="templates/base.html" class="active">Home</a>
+      <a href="templates/about.html" class="inactive">About Us</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Search input -->
+    <!--<form id="search-form" action="base" method="post" novalidate>
+      <div>
+        <label for="user-input-request">Topic:</label>
+        <input type="text" name="user-input" id="user-input-request" />
+      </div>
+      <div class="submit-box">
+        <input id="submit-search" type="submit" value="submit" class="submit" />
+      </div>
+    </form>-->
+    <div class="header-and-form-box">
+      <h1 class="center-title">Bias Free News</h1>
+
+      <div class="input-box" onclick="sendFocus()">
+        <input placeholder="Search for an article topic" id="text-val" onkeyup="filterText()">
+      </div>
+
+      <div id="results-box">
+
+      </div>
+    </div>
+
+    <!-- Search results -->
+    <script>
+      function resultsBoxTemplate(title,author,bias){
+          return `<div>
+              <h3 class='article-title'>${title}</h3>
+              <p class='article-desc'>${author}</p>
+              <p class='article-rating'>Bias: ${bias}</p>
+          </div>`
+      }
+
+      function sendFocus(){
+          document.getElementById('text-val').focus()
+      }
+
+      function filterText(){
+          document.getElementById("results-box").innerHTML = ""
+          console.log(document.getElementById("text-val").value)
+          fetch("/articles?" + new URLSearchParams({ title: document.getElementById("text-val").value }).toString())
+          .then((response) => response.json())
+          .then((data) => data.forEach(row => {
+              
+              let tempDiv = document.createElement("div")
+              tempDiv.innerHTML = resultsBoxTemplate(row.title,row.descr,row.imdb_rating)
+              document.getElementById("results-box").appendChild(tempDiv)
+          }));
+      }      
+    </script>
+  </main>
+
+</body>
