@@ -31,9 +31,14 @@ main {
 */
 
 .input-box {
-  margin: auto;
-  width: 50%;
+  /*margin: auto;
+  width: 50%;*/
   background-color: lightgray;
   border: 1px solid black;
   border-radius: 5px;
+}
+
+.header-and-form-box {
+  margin: auto;
+  width: 50%;
 }
