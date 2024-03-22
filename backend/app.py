@@ -71,7 +71,7 @@ def determine_political_leaning(text):
       result = sentiment_score * sentiment_weight + keywords * keyword_weight
     return result
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
-
+filtered_df = articles_df[articles_df['text'].str.contains("thanks biden", case=False)]
 
 app = Flask(__name__)
 CORS(app)
