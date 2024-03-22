@@ -9,9 +9,10 @@ main {
   margin-right: 5px;
 }
 
-.nav-right {
+.nav-right a {
   color: black;
   text-decoration: none;
+  font-size: 2em;
 }
 
 .active {
