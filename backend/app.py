@@ -88,11 +88,13 @@ def json_search(query):
 def home():
     return render_template('base.html',title="sample html")
 
-@app.route("/ttt")
+@app.route("/search")
 def test():
-    q = QueryChecker('biden')
+    query = request.args.get('q', '')
+    q = QueryChecker(query)
     q.loadData('./temp4.json')
-    return q.get_most_similar('biden')
+    most_similar = q.get_most_similar(query)
+    return most_similar
 
 
 @app.route("/articles")
