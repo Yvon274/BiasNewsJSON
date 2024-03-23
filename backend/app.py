@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from helpers.MySQLDatabaseHandler import MySQLDatabaseHandler
 import pandas as pd
+from helpers.utils import QueryChecker
 
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -86,6 +87,13 @@ def json_search(query):
 @app.route("/")
 def home():
     return render_template('base.html',title="sample html")
+
+@app.route("/ttt")
+def test():
+    q = QueryChecker('biden')
+    q.loadData('./temp4.json')
+    return q.get_most_similar('biden')
+
 
 @app.route("/articles")
 def articles_search():
