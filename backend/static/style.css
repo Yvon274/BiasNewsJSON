@@ -47,24 +47,70 @@ main {
 
 .input-box {
   margin: auto;
-  width: 50%;
+  /*width: 50%;*/
+  margin-bottom: 1em;
+  max-width: 561px;
+  width: 100%;
+  display: flex;
 }
 
 .input-box input{
   background-color: lightgray;
   border: 1px solid black;
   border-radius: 5px;
-  width: 100%;
+  /*width: 100%;*/
+  height: 44px;
+  box-sizing: border-box;
+  flex: 1;
 }
 
 .header-and-form-box {
+  padding-top: 75px;
   margin: auto;
-  width: 50%;
+  width: 75%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
-.center-title {
-  text-align: center;
+.center-banner {
+  width: 272px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+
+}
+
+.left {
+  margin-top: 0px;
+  color: blue;
+}
+
+.right {
+  margin-top: 0px;
+  color: red;
+}
+
+.center {
+  margin-top: 0px;
+  color: black;
+}
+
+.score-box {
+  display: flex;
+}
+
+.article-title {
+  margin-bottom: 0px;
+  margin-top: 0.5em;
+}
+
+.score-p {
+  padding-right: 3px;
+  margin-top: 0px;
+}
+
+.article-desc {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
 }
