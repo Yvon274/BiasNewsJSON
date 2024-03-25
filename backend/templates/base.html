@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
 <body>
-  <header>
+  <!--<header>
     <div class="nav-left">
       <p class="nav-icon">BFN</p>
     </div>
@@ -13,7 +13,7 @@
       <a href="templates/base.html" class="active">Home</a>
       <a href="templates/about.html" class="inactive">About Us</a>
     </div>
-  </header>
+  </header> -->
 
   <main>
     <!-- Search input -->
@@ -27,7 +27,8 @@
       </div>
     </form>-->
     <div class="header-and-form-box">
-      <h1 class="center-title">Bias Free News</h1>
+      <!--<h1 class="center-title">Bias Free News</h1>-->
+      <img class="center-banner" src="{{ url_for('static', filename='images/banner6.png') }}">
 
       <div class="input-box" onclick="sendFocus()">
         <input placeholder="Search for an article topic" id="filter-text-val" onkeyup="filterText()">
@@ -42,10 +43,26 @@
     <script>
 
       function answerBoxTemplate(title, titleDesc, rating) {
+        let absrating = Math.abs(rating);
+        let direction;
+        let directionclass;
+        if (rating > 0) {
+            direction = "Left";
+            directionclass = "left"
+        } else if (rating < 0) {
+            direction = "Right";
+            directionclass = "right"
+        } else {
+            direction = "Center";
+            directionclass = "center"
+        }
         return `<div class=''>
-          <h3 class='episode-title'>${title}</h3>
-          <p class='episode-desc'>${titleDesc}</p>
-          <p class='episode-rating'>Score: ${rating}</p>
+          <h3 class='article-title'>${title}</h3>
+          <p class='article-desc'>${titleDesc}</p>
+          <div class='score-box'>
+            <p class="score-p">Bias: </p>
+            <p class='${directionclass}'> ${direction} ${absrating}</p>
+          </div>
         </div>`
       }
 
