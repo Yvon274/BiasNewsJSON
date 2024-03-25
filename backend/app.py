@@ -83,7 +83,7 @@ CORS(app)
 # Sample search using json with pandas
 def json_search(query):
     matches = articles_df[articles_df['title'].str.lower().str.contains(query.lower())]
-    matches_filtered = matches[['title', 'text', 'score']]
+    matches_filtered = matches[['title', 'text', 'score', 'url']]
     matches_filtered_json = matches_filtered.to_json(orient='records')
     return matches_filtered_json
 

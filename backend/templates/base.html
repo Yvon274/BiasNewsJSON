@@ -42,27 +42,35 @@
     <!-- Search results -->
     <script>
 
-      function answerBoxTemplate(title, titleDesc, rating) {
+      function answerBoxTemplate(title, titleDesc, rating, url) {
         let absrating = Math.abs(rating);
         let direction;
         let directionclass;
         if (rating > 0) {
             direction = "Left";
             directionclass = "left"
+            if (rating>0.75) {
+              direction = "Far Left";
+            }
         } else if (rating < 0) {
             direction = "Right";
             directionclass = "right"
+            if (rating<-0.75) {
+              direction = "Far Right";
+            }
         } else {
             direction = "Center";
             directionclass = "center"
         }
-        return `<div class=''>
-          <h3 class='article-title'>${title}</h3>
-          <p class='article-desc'>${titleDesc}</p>
-          <div class='score-box'>
-            <p class="score-p">Bias: </p>
-            <p class='${directionclass}'> ${direction} ${absrating}</p>
-          </div>
+        return `<div class='record-box'>
+          <a class="link" href="${url}">
+            <h3 class='article-title'>${title}</h3>
+            <p class='article-desc'>${titleDesc}</p>
+            <div class='score-box'>
+              <p class="score-p">Bias: </p>
+              <p class='${directionclass}'> ${direction} ${absrating}</p>
+            </div>
+          </a>
         </div>`
       }
 
@@ -77,7 +85,7 @@
           .then((response) => response.json())
           .then((data) => data.forEach(row => {
             let tempDiv = document.createElement("div")
-            tempDiv.innerHTML = answerBoxTemplate(row.title, row.text.substring(0, 200), row.score)
+            tempDiv.innerHTML = answerBoxTemplate(row.title, row.text.substring(0, 200), row.score, row.url)
             document.getElementById("answer-box").appendChild(tempDiv)
           }));
 

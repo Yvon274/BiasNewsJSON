@@ -114,3 +114,17 @@ main {
   margin-bottom: 0.25em;
   margin-top: 0.25em;
 }
+
+.link {
+  text-decoration: none;
+  color: black;
+}
+
+.record-box {
+  padding: 7px;
+  border-radius: 5px;
+}
+
+.record-box:hover {
+  background-color: lightgray;
+}
