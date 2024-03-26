@@ -78,7 +78,7 @@ class QueryChecker:
         self.data = data
 
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
-        corpus = self.data['text']
+        corpus = self.data['text'].str.lower()
 
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
@@ -91,6 +91,6 @@ class QueryChecker:
         most_similar_document = corpus[most_similar_index]
         similarity_score = cosine_similarities[most_similar_index]
 
-        top_50_indices = np.argsort(cosine_similarities)[50:]
+        top_50_indices = np.argsort(cosine_similarities)[-50:][::-1]
         return top_50_indices
         
