@@ -64,15 +64,17 @@ def determine_political_leaning(text):
     if sentiment_score >= 0:
       if right_score >= left_score:
         keywords = (right_score - left_score)/(right_score+left_score)
+        result = sentiment_score * sentiment_weight + keywords * keyword_weight
       else:
         keywords = (left_score - right_score)/(right_score+left_score)
-      result = sentiment_score * sentiment_weight + keywords * keyword_weight
+        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
     else:
       if right_score >= left_score:
         keywords = (left_score - right_score)/(right_score+left_score)
+        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
       else:
         keywords = (right_score - left_score)/(right_score+left_score)
-      result = sentiment_score * sentiment_weight + keywords * keyword_weight
+        result = sentiment_score * sentiment_weight + keywords * keyword_weight
     return result
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
 
