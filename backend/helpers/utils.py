@@ -63,7 +63,7 @@ class QueryChecker:
         self.article_url_to_name = {v: k for k, v in self.article_name_to_url.items()}
         
     
-    def get_most_similar(self, query):
+    def get_most_similar(self, query, data):
         """Returns a float giving the cosine similarity of
            the two movie transcripts.
         
@@ -75,8 +75,11 @@ class QueryChecker:
                         in the term-document matrix.}
         Returns: Float (Cosine similarity of the two movie transcripts.)
         """
+        self.data = data
+
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
-        corpus = [d['text'] for d in self.data]
+        corpus = self.data['text']
+
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
 
@@ -88,5 +91,7 @@ class QueryChecker:
         most_similar_document = corpus[most_similar_index]
         similarity_score = cosine_similarities[most_similar_index]
 
-        return str(most_similar_document)
+        top_50_indices = np.argsort(cosine_similarities)[50:]
+        print(corpus)
+        return top_50_indices
         

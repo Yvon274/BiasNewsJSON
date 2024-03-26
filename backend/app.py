@@ -89,6 +89,16 @@ def json_search(query):
     matches_filtered_json = matches_filtered.to_json(orient='records')
     return matches_filtered_json
 
+def cos_search(query):
+    q = QueryChecker(query)
+    q.loadData('./temp4.json')
+
+    top_indices = q.get_most_similar(query.lower(), articles_df)
+    matches = articles_df.iloc[top_indices]
+    matches_filtered = matches[['title', 'text', 'score', 'url']]
+    matches_filtered_json = matches_filtered.to_json(orient='records')
+    return matches_filtered_json
+
 @app.route("/")
 def home():
     return render_template('base.html',title="sample html")
@@ -105,7 +115,7 @@ def test():
 @app.route("/articles")
 def articles_search():
     text = request.args.get("title")
-    return json_search(text)
+    return cos_search(text)
 
 if 'DB_NAME' not in os.environ:
     app.run(debug=True,host="0.0.0.0",port=5000)
