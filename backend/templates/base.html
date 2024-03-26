@@ -1,31 +1,21 @@
 <!doctype html>
-<title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<head>
+  <title>Bias Free News</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+</head>
+
+<!-- ADD A FAVICON XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-->
+
 <body>
-  <!--<header>
-    <div class="nav-left">
-      <p class="nav-icon">BFN</p>
-    </div>
-    <div class="nav-right">
-      <a href="templates/base.html" class="active">Home</a>
-      <a href="templates/about.html" class="inactive">About Us</a>
-    </div>
-  </header> -->
 
   <main>
     <!-- Search input -->
-    <!--<form id="search-form" action="base" method="post" novalidate>
-      <div>
-        <label for="user-input-request">Topic:</label>
-        <input type="text" name="user-input" id="user-input-request" />
-      </div>
-      <div class="submit-box">
-        <input id="submit-search" type="submit" value="submit" class="submit" />
-      </div>
-    </form>-->
     <div class="header-and-form-box">
       <!--<h1 class="center-title">Bias Free News</h1>-->
       <img class="center-banner" src="{{ url_for('static', filename='images/banner7.png') }}">
