@@ -92,6 +92,5 @@ class QueryChecker:
         similarity_score = cosine_similarities[most_similar_index]
 
         top_50_indices = np.argsort(cosine_similarities)[50:]
-        print(corpus)
         return top_50_indices
         
