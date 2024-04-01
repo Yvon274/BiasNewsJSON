@@ -121,8 +121,8 @@ left_keywords = [word.lower() for word in left_keywords_int]
 right_keywords = [word.lower() for word in right_keywords_int]
 
 #Initial weights
-sentiment_weight = 0.7
-keyword_weight = 0.3
+sentiment_weight = 0.5
+keyword_weight = 0.5
 
 def scorer(sentiment_score, text):
    
@@ -172,6 +172,14 @@ def determine_political_leaning(text):
     return sum(result)/total_sent, relevant_sents
     
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
+
+#Inputs for can be [-1, 1]
+def feedback(user_score, current_score):
+   #If it is too far away from the original score it will be weighted less
+   diff = abs(user_score - current_score)
+   weight = 1/(10+(4*diff))
+   new_score = (((1-weight)*current_score) + (weight*user_score))
+   return new_score
 
 
 app = Flask(__name__)
