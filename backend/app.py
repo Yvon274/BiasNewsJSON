@@ -11,6 +11,8 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from nltk.tokenize import sent_tokenize
 import ssl
 
+nltk.download('punkt')
+
 # ROOT_PATH for linking with all your files. 
 # Feel free to use a config.py or settings.py with a global export variable
 os.environ['ROOT_PATH'] = os.path.abspath(os.path.join("..",os.curdir))
