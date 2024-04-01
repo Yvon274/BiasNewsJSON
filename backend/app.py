@@ -8,6 +8,7 @@ from helpers.utils import QueryChecker
 
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+from nltk.tokenize import sent_tokenize
 import ssl
 
 # ROOT_PATH for linking with all your files. 
@@ -34,48 +35,142 @@ else:
 nltk.download('vader_lexicon')
 
 sid = SentimentIntensityAnalyzer()
-left_keywords_int = ['liberal', 'progressive', 'socialist', 'equality', 'justice', 'biden', 'Ukraine']
-right_keywords_int = ['conservative', 'capitalist', 'free market', 'individual freedom', 'traditional values', 'Trump']
+left_keywords_int = [
+    "Social justice",
+    "Equality",
+    "Diversity",
+    "Inclusion",
+    "Environmentalism",
+    "Climate change",
+    "LGBTQ",
+    "Feminism",
+    "Healthcare access",
+    "Progressive",
+    "Intersectionality",
+    "Systemic racism",
+    "Income inequality",
+    "Workers' rights",
+    "Gun control",
+    "Anti-discrimination",
+    "Affordable housing",
+    "Universal basic income",
+    "Welfare state",
+    "Public education",
+    "Medicare for All",
+    "Indigenous rights",
+    "Human rights",
+    "Immigration reform",
+    "Anti-war",
+    "Fair trade",
+    "Community organizing",
+    "Grassroots activism",
+    "Labor unions",
+    "Renewable energy",
+    "Biden",
+    "Bernie Sanders",
+    "Alexandria Ocasio-Cortez",
+    "Noam Chomsky",
+    "Angela Davis",
+    "Elizabeth Warren",
+    "Jeremy Corbyn",
+    "Gavin Newsom"
+
+]
+right_keywords_int = [
+    "Free market",
+    "Individualism",
+    "Limited government",
+    "Traditional values",
+    "Nationalism",
+    "Second Amendment rights",
+    "Border security",
+    "Tax cuts",
+    "Pro-life",
+    "Religious freedom",
+    "Law and order",
+    "Personal responsibility",
+    "Fiscal conservatism",
+    "School choice",
+    "Family values",
+    "Military strength",
+    "Patriotism",
+    "Economic freedom",
+    "Conservatism",
+    "Capitalism",
+    "National sovereignty",
+    "States' rights",
+    "Liberty",
+    "Private property rights",
+    "Self-reliance",
+    "American exceptionalism",
+    "Regulatory reform",
+    "Entrepreneurship",
+    "Traditional marriage",
+    "Right to bear arms",
+    "Trump",
+    "Ted Cruz",
+    "Tucker Carlson",
+    "Ben Shapiro",
+    "Candace Owens",
+    "Jordan Peterson",
+    "Marjorie Taylor Greene",
+    "Ron Desantis"
+]
+
+left_keywords = [word.lower() for word in left_keywords_int]
+right_keywords = [word.lower() for word in right_keywords_int]
+
+#Initial weights
+sentiment_weight = 0.7
+keyword_weight = 0.3
+
+def scorer(sentiment_score, text):
+   
+   tokens = text.lower().split()
+   left_score = sum(token in left_keywords for token in tokens)
+   right_score = sum(token in right_keywords for token in tokens)
+      
+
+   if right_score + left_score == 0:
+      return 0  
+   if sentiment_score >= 0:
+      if right_score >= left_score:
+        keywords = (right_score - left_score)/(right_score+left_score)
+        result = sentiment_score * sentiment_weight + keywords * keyword_weight
+      else:
+        keywords = (left_score - right_score)/(right_score+left_score)
+        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
+   else:
+      if right_score >= left_score:
+        keywords = (left_score - right_score)/(right_score+left_score)
+        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
+      else:
+        keywords = (right_score - left_score)/(right_score+left_score)
+        result = sentiment_score * sentiment_weight + keywords * keyword_weight
+   return result
+   
 
 def determine_political_leaning(text):
     # Sentiment analysis
-    sentiment_score = sid.polarity_scores(text)['compound']
-    
-    # Named entity recognition (NER) found this on the internet and seemed useful for the future
-    # doc = nlp(text)
-    # entities = [ent.text.lower() for ent in doc.ents]
-    
-    # Keyword analysis
-    tokens = text.lower().split()
+    sentences = sent_tokenize(text)
+    total_sent = len(sentences)
 
-    left_keywords = [word.lower() for word in left_keywords_int]
-    right_keywords = [word.lower() for word in right_keywords_int]
-    left_score = sum(token in left_keywords for token in tokens)
-    right_score = sum(token in right_keywords for token in tokens)
-    
-    # Assign weights to each component in the future this can be changing but for now it is hardcoded
-    sentiment_weight = 0.7
-    keyword_weight = 0.3
-    
-    #if it is positive then I just assumed that the one with more terms said is the one that it is being positive about
-    if right_score + left_score == 0:
-      return 0
 
-    if sentiment_score >= 0:
-      if right_score >= left_score:
-        keywords = (right_score - left_score)/(right_score+left_score)
-        result = sentiment_score * sentiment_weight + keywords * keyword_weight
-      else:
-        keywords = (left_score - right_score)/(right_score+left_score)
-        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
-    else:
-      if right_score >= left_score:
-        keywords = (left_score - right_score)/(right_score+left_score)
-        result = -1 * sentiment_score * sentiment_weight + keywords * keyword_weight
-      else:
-        keywords = (right_score - left_score)/(right_score+left_score)
-        result = sentiment_score * sentiment_weight + keywords * keyword_weight
-    return result
+    #Get the polarity of each sentence in the text
+    result = []
+    for sentence in sentences:
+        sentiment_score = sid.polarity_scores(sentence)['compound']
+        sent_score = scorer(sentiment_score, sentence)
+        result.append(sent_score)
+    
+    #Return the relevant sentences that were used in making the decision
+    indexes = list(enumerate(result))
+    sorted_scores = sorted(indexes, key=lambda x: x[1], reverse=True)
+    top_3 = [index for index, _ in sorted_scores[:3]]
+    relevant_sents = [(sentences[x], result[x]) for x in top_3]
+    
+    return sum(result)/total_sent, relevant_sents
+    
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
 
 
