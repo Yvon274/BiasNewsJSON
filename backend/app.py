@@ -157,7 +157,6 @@ def determine_political_leaning(text):
     sentences = sent_tokenize(text)
     total_sent = len(sentences)
 
-
     #Get the polarity of each sentence in the text
     result = []
     for sentence in sentences:
@@ -168,9 +167,12 @@ def determine_political_leaning(text):
     #Return the relevant sentences that were used in making the decision
     indexes = list(enumerate(result))
     sorted_scores = sorted(indexes, key=lambda x: x[1], reverse=True)
-    top_3 = [index for index, _ in sorted_scores[:3]]
+    if sent_score <= 0:
+        top_3 = [index for index, _ in sorted_scores[-3:]]
+    else:
+        top_3 = [index for index, _ in sorted_scores[:3]]
     relevant_sents = [(sentences[x], result[x]) for x in top_3]
-    
+
     return sum(result)/total_sent, relevant_sents
     
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)

@@ -1,10 +1,12 @@
 <!doctype html>
+
 <head>
   <title>Bias Free News</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
+    rel="stylesheet">
 </head>
 
 <!-- ADD A FAVICON XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
@@ -13,7 +15,16 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-->
 
 <body>
-
+  <div class="logos">
+    <img src="{{ url_for('static', filename='logos/fox.png')}}" alt="fox">
+    <img src="{{ url_for('static', filename='logos/cnn.png')}}" alt="cnn">
+    <img src="{{ url_for('static', filename='logos/msnbc.png')}}" alt="msnbc">
+    <img src="{{ url_for('static', filename='logos/nyt.png')}}" alt="nyt">
+    <img src="{{ url_for('static', filename='logos/bbc.png')}}" alt="bbc">
+    <img src="{{ url_for('static', filename='logos/daily_mail.png')}}" alt="dm">
+    <img src="{{ url_for('static', filename='logos/cbs.png')}}" alt="cbs">
+    <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
+  </div>
   <main>
     <!-- Search input -->
     <div class="header-and-form-box">
@@ -25,32 +36,32 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-->
       </div>
 
       <div id="answer-box">
-
       </div>
+
     </div>
 
     <!-- Search results -->
     <script>
 
-      function answerBoxTemplate(title, titleDesc, rating, url) {
+      function answerBoxTemplate(title, titleDesc, rating, date, url) {
         let absrating = Math.abs(rating);
         let direction;
         let directionclass;
         if (rating > 0) {
-            direction = "Left";
-            directionclass = "left"
-            if (rating>0.75) {
-              direction = "Far Left";
-            }
+          direction = "Left";
+          directionclass = "left"
+          if (rating > 0.75) {
+            direction = "Far Left";
+          }
         } else if (rating < 0) {
-            direction = "Right";
-            directionclass = "right"
-            if (rating<-0.75) {
-              direction = "Far Right";
-            }
+          direction = "Right";
+          directionclass = "right"
+          if (rating < -0.75) {
+            direction = "Far Right";
+          }
         } else {
-            direction = "Center";
-            directionclass = "center"
+          direction = "Center";
+          directionclass = "center"
         }
         /*ADD DATE TO ARTICLES XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -58,16 +69,19 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-->
 
         return `<div class='record-box'>
           <a class="link" href="${url}">
-            <h3 class='article-title'>${title}</h3>
-            <p class='article-desc'>${titleDesc}</p>
-            <div class='score-box'>
-              <p class="score-p">Bias: </p>
-              <p class='${directionclass}'> ${direction} ${absrating}</p>
-            </div>
-          </a>
+            <h3 class='article-title'>${title}</h3></a>
+            <div class='slider-container'>
+            <h4>Feedback:</h4>
+            <input type='range' min = '0' max='100' value='50' class='slider'>
+            <button oneclick="submitScore()">Submit</button>
+            </div>  
         </div>`
       }
 
+      // <div class='score-box'>
+      //         <p class="score-p">Bias: </p>
+      //         <p class='${directionclass}'> ${direction} ${absrating}</p>
+      //       </div>
       function sendFocus() {
         document.getElementById('filter-text-val').focus()
       }
@@ -79,7 +93,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-->
           .then((response) => response.json())
           .then((data) => data.forEach(row => {
             let tempDiv = document.createElement("div")
-            tempDiv.innerHTML = answerBoxTemplate(row.title, row.text.substring(0, 200), row.score, row.url)
+            tempDiv.innerHTML = answerBoxTemplate(row.title, (row.text.substring(0, 75) + "..."), row.score, "todo", row.url)
             document.getElementById("answer-box").appendChild(tempDiv)
           }));
 
