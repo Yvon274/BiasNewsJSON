@@ -259,6 +259,11 @@ button {
   border-radius: 10px;
 }
 
+.check {
+  width: 20%;
+  height: 20%;
+}
+
 button:hover {
   color: white;
   background-color: black;
@@ -266,6 +271,7 @@ button:hover {
 
 .center {
   text-align: center;
+  margin-right: 15px;
 }
 
 .marker {

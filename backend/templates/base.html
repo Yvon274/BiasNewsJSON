@@ -59,22 +59,24 @@
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
 
         return `<div class='record-box' style='background: ${color}'>
-          <a class="link" href="${url}">
+          <a class="link" href="${url}" target="_blank">
             <h3 class='article-title'>${title}</h3></a>
             <div class='slider-container'>
             <h4>Was our article political bias rating correct?</h4>
             <div class="center">
-            <input type='range' min = '0' max='100' value='50' class='slider'>
-            <button id= 'submit' oneclick="submitScore()">Submit</button>
+            <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
+            <button id= 'submit' onclick="submitScore()">Submit</button>
             </div>
             </div>  
         </div>`
       }
+      function submitScore() {
+        var clickedButton = event.target;
+        var answerBox = clickedButton.closest('.record-box');
+        answerBox.innerHTML = `<div class="center"><h3>Thank you for your response</h3>
+        <img class = "check" src="{{ url_for('static', filename='images/check_mark.png')}}"> </div>`;
+      }
 
-      // <div class='score-box'>
-      //         <p class="score-p">Bias: </p>
-      //         <p class='${directionclass}'> ${direction} ${absrating}</p>
-      //       </div>
       function sendFocus() {
         document.getElementById('filter-text-val').focus()
       }
@@ -91,6 +93,8 @@
           }));
 
       }
+
+
 
     </script>
   </main>
