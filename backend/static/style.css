@@ -210,22 +210,29 @@ main {
 }
 
 .record-box {
-  border: 2px solid white;
+  /*border: 2px solid white;*/
   width: calc(100%/ 3);
-  padding: 7px;
   justify-content: center;
   border-radius: 20px;
   margin-bottom: 20px;
+  background-color: white;
 }
+
+.record-box-overlay {
+  border-radius: 20px;
+  padding: 7px;
+}
+
 
 .record-box h3 {
-  color: white;
+  /*color: white;*/
+  margin: 0px;
 }
-
+/*
 .record-box h4 {
   color: white;
 }
-
+*/
 .slider {
   display: none;
   width: 100%;

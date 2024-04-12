@@ -173,7 +173,7 @@ def determine_political_leaning(text):
         top_3 = [index for index, _ in sorted_scores[:3]]
     relevant_sents = [(sentences[x], result[x]) for x in top_3]
 
-    return sum(result)/total_sent, relevant_sents
+    return sum(result)/total_sent
     
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
 
