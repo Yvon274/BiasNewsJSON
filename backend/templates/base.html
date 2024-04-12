@@ -38,38 +38,35 @@
 
     <!-- Search results -->
     <script>
-
-      function answerBoxTemplate(title, titleDesc, rating, date, url) {
+      function mapValue(value, min1, max1, min2, max2) {
+        return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+      }
+      function answerBoxTemplate(title, titleDesc, rating, url) {
         let absrating = Math.abs(rating);
         let direction;
         let directionclass;
-        if (rating > 0) {
-          direction = "Left";
-          directionclass = "left"
-          if (rating > 0.75) {
-            direction = "Far Left";
-          }
-        } else if (rating < 0) {
-          direction = "Right";
-          directionclass = "right"
-          if (rating < -0.75) {
-            direction = "Far Right";
-          }
+        if (rating < -0.05) {
+          color_num = mapValue(absrating, 0, 1, 0, 255)
+          color = "rgb(0, 0, " + color_num + ")"
+        } else if (rating > 0.05) {
+          color = mapValue(absrating, 0, 1, 0, 255)
+          color = "rgb(" + color_num + ", 0, 0)"
         } else {
-          direction = "Center";
-          directionclass = "center"
+          color = "rgb(125, 125, 125)"
         }
         /*ADD DATE TO ARTICLES XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
 
-        return `<div class='record-box'>
+        return `<div class='record-box' style='background: ${color}'>
           <a class="link" href="${url}">
             <h3 class='article-title'>${title}</h3></a>
             <div class='slider-container'>
-            <h4>Feedback:</h4>
+            <h4>Was our article political bias rating correct?</h4>
+            <div class="center">
             <input type='range' min = '0' max='100' value='50' class='slider'>
-            <button oneclick="submitScore()">Submit</button>
+            <button id= 'submit' oneclick="submitScore()">Submit</button>
+            </div>
             </div>  
         </div>`
       }
@@ -89,7 +86,7 @@
           .then((response) => response.json())
           .then((data) => data.forEach(row => {
             let tempDiv = document.createElement("div")
-            tempDiv.innerHTML = answerBoxTemplate(row.title, (row.text.substring(0, 75) + "..."), row.score, "todo", row.url)
+            tempDiv.innerHTML = answerBoxTemplate(row.title, (row.text.substring(0, 200) + "..."), row.score, row.url)
             document.getElementById("answer-box").appendChild(tempDiv)
           }));
 
