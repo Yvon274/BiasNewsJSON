@@ -28,7 +28,7 @@
       <img class="center-banner" src="{{ url_for('static', filename='images/newlogo.png') }}">
 
       <div class="input-box" onclick="sendFocus()">
-        <input placeholder="Search for an article topic" id="filter-text-val" onkeyup="filterText()">
+        <input placeholder="Search for an article topic" id="filter-text-val" onkeydown="if(event.keyCode===13) filterText()">
       </div>
 
       <div id="answer-box">
