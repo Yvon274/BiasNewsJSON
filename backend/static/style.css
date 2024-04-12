@@ -80,7 +80,7 @@ body {
 
 .logos img:nth-child(8) {
   animation-delay: -10s;
-  animation-duration: 10s;
+  animation-duration: 11s;
   left: 4%;
   width: 10%;
 }
@@ -228,6 +228,7 @@ main {
   /*color: white;*/
   margin: 0px;
 }
+
 /*
 .record-box h4 {
   color: white;
@@ -281,17 +282,17 @@ button:hover {
   margin-right: 15px;
 }
 
-.marker {
+.fixed-marker {
+  margin-bottom: none;
   position: relative;
-  width: 5px;
-  /* Adjust marker size */
-  height: 20px;
-  /* Match slider height */
-  background-color: white;
-  /* Marker color */
-  border-radius: 50%;
+  top: 0;
+  width: 2px;
+  height: 35px;
+  background-color: rgb(0, 0, 0);
+  pointer-events: none;
   z-index: 1;
-  /* Ensure marker appears above slider */
+  transform: translate(-50%, -95%);
+  top: 20%;
 }
 
 

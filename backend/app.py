@@ -177,13 +177,6 @@ def determine_political_leaning(text):
     
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
 
-#Inputs for can be [-1, 1]
-def feedback(user_score, current_score):
-   #If it is too far away from the original score it will be weighted less
-   diff = abs(user_score - current_score)
-   weight = 1/(10+(4*diff))
-   new_score = (((1-weight)*current_score) + (weight*user_score))
-   return new_score
 
 
 app = Flask(__name__)
@@ -217,6 +210,18 @@ def test():
     q.loadData('./temp4.json')
     most_similar = q.get_most_similar(query)
     return most_similar
+
+@app.route("/update-score", methods=['POST'])
+#Inputs for can be [-1, 1]
+def feedback():
+   data = request.json
+   user_score = data["user_score"]
+   current_score = data["current_score"]
+   #If it is too far away from the original score it will be weighted less
+   diff = abs(user_score - current_score)
+   weight = 1/(10+(4*diff))
+   new_score = (((1-weight)*current_score) + (weight*user_score))
+   return new_score
 
 
 @app.route("/articles")

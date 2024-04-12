@@ -28,7 +28,8 @@
       <img class="center-banner" src="{{ url_for('static', filename='images/newlogo.png') }}">
 
       <div class="input-box" onclick="sendFocus()">
-        <input placeholder="Search for an article topic" id="filter-text-val" onkeydown="if(event.keyCode===13) filterText()">
+        <input placeholder="Search for an article topic" id="filter-text-val"
+          onkeydown="if(event.keyCode===13) filterText()">
       </div>
 
       <div id="answer-box">
@@ -52,19 +53,21 @@
         // left
         if (rating < -0.05) {
           color = "rgb(0, 168, 243," + color_num + ")"
-          
+          marker = mapValue(rating - 0.2, -1.0, 1.0, 1, 99)
+
           // right
         } else if (rating > 0.05) {
           color = "rgb(236, 28, 36," + color_num + ")"
+          marker = mapValue(rating + 0.2, -1, 1, 1, 99)
 
           // center
         } else {
           color = "rgb(255, 255, 255, 1)"
+          marker = mapValue(rating, -1, 1, 1, 99)
         }
         /*ADD DATE TO ARTICLES XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
-
         return `
         <div class='record-box'>
           <div class="record-box-overlay" style='background: ${color}'>
@@ -74,6 +77,8 @@
                   <h4>Was our article political bias rating correct?</h4>
                 <div class="center">
                   <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
+                  <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
+                    </div>
                   <button id= 'submit' onclick="submitScore()">Submit</button>
                 </div>
               </div> 
@@ -86,6 +91,15 @@
         var answerBox = clickedButton.closest('.record-box');
         answerBox.innerHTML = `<div class="center"><h3>Thank you for your response</h3>
         <img class = "check" src="{{ url_for('static', filename='images/check_mark.png')}}"> </div>`;
+        var slider = document.getElementById('slider');
+        var score = slider.value;
+        fetch('/update-score', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user_score: score, current_score: rating }),
+        })
       }
 
       function sendFocus() {
