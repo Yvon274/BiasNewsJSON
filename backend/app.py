@@ -220,16 +220,26 @@ def test():
     return most_similar
 
 @app.route("/update-score", methods=['POST'])
-#Inputs for can be [-1, 1]
 def feedback():
    data = request.json
    user_score = data["user_score"]
    current_score = data["current_score"]
+   title = data["title"]
    #If it is too far away from the original score it will be weighted less
    diff = abs(user_score - current_score)
    weight = 1/(10+(4*diff))
    new_score = (((1-weight)*current_score) + (weight*user_score))
-   return new_score
+   row_index = articles_df.loc[articles_df["title"] == title].index[0]
+   articles_df.loc[row_index, 'score'] = new_score
+   with open("temp4.json", "r") as file:
+    dataset = json.load(file)
+    for item in dataset["articles"]:
+        if item["title"] == title:
+            item["score"] = new_score
+
+    with open("temp4.json", "w") as file:
+        json.dump(dataset, file, indent=4)
+   return "done"
 
 
 @app.route("/articles")
