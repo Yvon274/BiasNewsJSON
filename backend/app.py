@@ -177,6 +177,14 @@ def determine_political_leaning(text):
     
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
 
+json_data_with_scores = {
+    'articles': articles_df.to_dict(orient='records')
+}
+
+# Write JSON data with scores back to file
+with open(json_file_path, 'w') as file:
+    json.dump(json_data_with_scores, file, indent=4)
+
 
 
 app = Flask(__name__)
