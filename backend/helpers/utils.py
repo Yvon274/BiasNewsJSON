@@ -42,10 +42,11 @@ def get_edit_distance(s1, s2):
 
     return normalized_distance
 
+
 class QueryChecker:
     n_feats = 5000
 
-    def __init__(self, query = None, docs = None):
+    def __init__(self, query=None, docs=None):
         self.tfidf_vec = None
         self.article_name_to_url = None
         self.data = None
@@ -83,7 +84,7 @@ class QueryChecker:
         """
         return TfidfVectorizer(max_features=max_features, stop_words=stop_words, max_df=max_df, min_df=min_df,
                                norm=norm)
-        
+
     def loadData(self, path):
         """
         path : path to the data on local machine
@@ -95,13 +96,14 @@ class QueryChecker:
         self.data = data
         self.numArticles = len(data)
 
-        self.article_url_to_index = {article_url: index for index, article_url in enumerate([d['url'] for d in data])}
+        self.article_url_to_index = {
+            article_url: index for index, article_url in enumerate([d['url'] for d in data])}
 
         self.article_name_to_url = {name: mid for name, mid in zip([d['title'] for d in data],
-                                                           [d['url'] for d in data])}
-        self.article_url_to_name = {v: k for k, v in self.article_name_to_url.items()}
-        
-    
+                                                                   [d['url'] for d in data])}
+        self.article_url_to_name = {v: k for k,
+                                    v in self.article_name_to_url.items()}
+
     # def get_most_similar(self, query, data):
     #     """Returns a float giving the cosine similarity of
     #        the two movie transcripts.
@@ -148,7 +150,8 @@ class QueryChecker:
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
         corpus = self.data['text'].str.lower()
 
-        words_list = [word.lower() for name in corpus for word in name.split() if len(word) >= 3]
+        words_list = [word.lower()
+                      for name in corpus for word in name.split() if len(word) >= 3]
         vocab = set(words_list)
 
         # FILTER QUERY SO THAT IT ONLY INCLUDES TERMS IN THE DOCUMENTS
@@ -161,9 +164,9 @@ class QueryChecker:
 
         query_tfidf = vectorizer.transform([filtered_query])
 
-        cosine_similarities = cosine_similarity(query_tfidf, tfidf_matrix).flatten()
+        cosine_similarities = cosine_similarity(
+            query_tfidf, tfidf_matrix).flatten()
 
-        top_50_indices = np.argsort(cosine_similarities)[-50:][::-1]
+        top_50_indices = np.argsort(cosine_similarities)[-75:][::-1]
 
         return top_50_indices
-        
