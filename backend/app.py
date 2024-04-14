@@ -337,7 +337,7 @@ def articles_search():
     # new search has three fields:
     # [[left_articles_json], [right_articles_json], [middle_articles_json], [all_articles_json]]
     # left, right, middle, all = three_search(text)
-    return three_searchv2(text)
+    return three_search(text)
 
 
 if 'DB_NAME' not in os.environ:
