@@ -2,6 +2,45 @@ import numpy as np
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from rapidfuzz import process, fuzz
+
+
+def get_edit_distance(s1, s2):
+    """
+    Calculate the Levenshtein distance between two strings, accounting for differences in string lengths.
+
+    Params:
+    - s1 (str): First string.
+    - s2 (str): Second string.
+
+    Returns:
+    - float: Normalized Levenshtein distance between s1 and s2.
+    """
+    len_s1 = len(s1)
+    len_s2 = len(s2)
+
+    # Create a matrix with dimensions (len(s1)+1) x (len(s2)+1)
+    matrix = [[0] * (len_s2 + 1) for _ in range(len_s1 + 1)]
+
+    # Initialize the first row and column of the matrix
+    for i in range(len_s1 + 1):
+        matrix[i][0] = i
+    for j in range(len_s2 + 1):
+        matrix[0][j] = j
+
+    # Fill in the rest of the matrix
+    for i in range(1, len_s1 + 1):
+        for j in range(1, len_s2 + 1):
+            cost = 0 if s1[i - 1] == s2[j - 1] else 1
+            matrix[i][j] = min(matrix[i - 1][j] + 1,  # Deletion
+                               matrix[i][j - 1] + 1,  # Insertion
+                               matrix[i - 1][j - 1] + cost)  # Substitution
+
+    # Normalize the edit distance by the length of the longer string
+    max_len = max(len_s1, len_s2)
+    normalized_distance = matrix[len_s1][len_s2] / max_len
+
+    return normalized_distance
 
 class QueryChecker:
     n_feats = 5000
@@ -63,10 +102,39 @@ class QueryChecker:
         self.article_url_to_name = {v: k for k, v in self.article_name_to_url.items()}
         
     
+    # def get_most_similar(self, query, data):
+    #     """Returns a float giving the cosine similarity of
+    #        the two movie transcripts.
+    #
+    #     Params: {query: query in string form.
+    #              mov2 (str): Name of the article.
+    #              input_doc_mat (numpy.ndarray): Term-document matrix of articles, where
+    #                     each row represents a document (movie transcript) and each column represents a term.
+    #              movie_name_to_index (dict): Dictionary that maps movie names to the corresponding row index
+    #                     in the term-document matrix.}
+    #     Returns: Float (Cosine similarity of the two movie transcripts.)
+    #     """
+    #     self.data = data
+    #
+    #     vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
+    #     corpus = self.data['text'].str.lower()
+    #
+    #
+    #     tfidf_matrix = vectorizer.fit_transform(corpus)
+    #
+    #     query_tfidf = vectorizer.transform([query])
+    #
+    #     cosine_similarities = cosine_similarity(query_tfidf, tfidf_matrix).flatten()
+    #
+    #     top_50_indices = np.argsort(cosine_similarities)[-50:][::-1]
+    #
+    #
+    #     return top_50_indices
+
     def get_most_similar(self, query, data):
         """Returns a float giving the cosine similarity of
            the two movie transcripts.
-        
+
         Params: {query: query in string form.
                  mov2 (str): Name of the article.
                  input_doc_mat (numpy.ndarray): Term-document matrix of articles, where
@@ -80,17 +148,22 @@ class QueryChecker:
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
         corpus = self.data['text'].str.lower()
 
+        words_list = [word.lower() for name in corpus for word in name.split() if len(word) >= 3]
+        vocab = set(words_list)
+
+        # FILTER QUERY SO THAT IT ONLY INCLUDES TERMS IN THE DOCUMENTS
+        filtered_query = ''
+        for word in query.split(' '):
+            filtered_query += process.extractOne(word, vocab)[0] + ' '
+        filtered_query = filtered_query.strip()
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
 
-        query_tfidf = vectorizer.transform([query])
+        query_tfidf = vectorizer.transform([filtered_query])
 
         cosine_similarities = cosine_similarity(query_tfidf, tfidf_matrix).flatten()
 
-        most_similar_index = np.argmax(cosine_similarities)
-        most_similar_document = corpus[most_similar_index]
-        similarity_score = cosine_similarities[most_similar_index]
-
         top_50_indices = np.argsort(cosine_similarities)[-50:][::-1]
+
         return top_50_indices
         
