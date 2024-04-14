@@ -205,13 +205,48 @@ def cos_search(query):
     q = QueryChecker(query)
     q.loadData('./temp4.json')
 
-    top_indices = q.get_most_similar(
-        query.lower(), articles_df)
+    top_indices = q.get_most_similar(query.lower(), articles_df)
     matches = articles_df.iloc[top_indices]
 
     matches_filtered = matches[['title', 'text', 'score', 'url']]
     matches_filtered_json = matches_filtered.to_json(orient='records')
     return matches_filtered_json
+
+def three_searchv2(query):
+    q = QueryChecker(query)
+    # q.loadData('./temp4.json')
+
+    pos_articles_df = articles_df[articles_df['score'] > 1]
+    neg_articles_df = articles_df[articles_df['score'] < 1]
+    med_articles_df = articles_df[(articles_df['score'] >= -0.15) & (articles_df['score'] <= 0.15)]
+
+    pos_top_indices = q.get_most_similar(query.lower(), pos_articles_df)
+    neg_top_indices = q.get_most_similar(query.lower(), neg_articles_df)
+    med_top_indices = q.get_most_similar(query.lower(), med_articles_df)
+    all_top_indices = q.get_most_similar(query.lower(), articles_df)
+
+    pos_matches = articles_df.iloc[pos_top_indices]
+    neg_matches = articles_df.iloc[neg_top_indices]
+    med_matches = articles_df.iloc[med_top_indices]
+    all_matches = articles_df.iloc[all_top_indices]
+
+    pos_matches_filtered = pos_matches[['title', 'text', 'score', 'url']]
+    neg_matches_filtered = neg_matches[['title', 'text', 'score', 'url']]
+    med_matches_filtered = med_matches[['title', 'text', 'score', 'url']]
+    all_matches_filtered = all_matches[['title', 'text', 'score', 'url']]
+
+    pos_matches_filtered_json = pos_matches_filtered.to_json(orient='records')
+    neg_matches_filtered_json = neg_matches_filtered.to_json(orient='records')
+    med_matches_filtered_json = med_matches_filtered.to_json(orient='records')
+    all_matches_filtered_json = all_matches_filtered.to_json(orient='records')
+
+    return [neg_matches_filtered_json, pos_matches_filtered_json, med_matches_filtered_json, all_matches_filtered_json]
+
+
+
+
+
+
 
 
 def three_search(query):
@@ -302,7 +337,7 @@ def articles_search():
     # new search has three fields:
     # [[left_articles_json], [right_articles_json], [middle_articles_json], [all_articles_json]]
     # left, right, middle, all = three_search(text)
-    return three_search(text)
+    return three_searchv2(text)
 
 
 if 'DB_NAME' not in os.environ:
