@@ -210,6 +210,7 @@
       function filterText() {
         document.getElementById("left-answer-box").innerHTML = "";
         document.getElementById("right-answer-box").innerHTML = "";
+        document.getElementById("middle-answer-box").innerHTML = "";
         //document.getElementById("middle-answer-box").innerHTML = "";
         console.log(document.getElementById("filter-text-val").value);
         fetch("/articles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
