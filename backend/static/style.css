@@ -216,10 +216,15 @@ main {
 }
 
 #left-answer-box {
-  width: 47%;
+  width: 30%;
 }
+
+#middle-answer-box {
+  width: 30%;
+}
+
 #right-answer-box {
-  width: 47%;
+  width: 30%;
 }
 
 .record-box {

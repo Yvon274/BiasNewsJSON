@@ -37,8 +37,22 @@
       </div>
 
 
+      <!--<div id="answer-box">
+        <div id="middle-answer-box">
+
+        </div>
+        <div id="split-answer-box">
+          <div id="left-answer-box"> 
+          </div>
+          <div id="right-answer-box"> 
+          </div>
+        </div>
+      </div>-->
+
       <div id="answer-box">
         <div id="left-answer-box"> 
+        </div>
+        <div id="middle-answer-box">
         </div>
         <div id="right-answer-box"> 
         </div>
@@ -132,6 +146,35 @@
         </div>`
       }
 
+      function middleAnswerBoxTemplate(title, titleDesc, rating, url, date) {
+        console.log(rating);
+        let direction;
+        let directionclass;
+        color = "rgb(255, 255, 255, 1)"
+        marker = mapValue(rating, -1, 1, 0, 100)
+        var date = new Date(date);
+        let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
+        return `
+        <div class='record-box'>
+          <div class="record-box-overlay" style='background: ${color}'>
+            <a class="link" href="${url}" target="_blank">
+              <h3 id="title2" class='article-title'>${title}</h3>
+              <p class="date">${newdate}</p>
+            </a>
+              <div class='slider-container'>
+                  <h4>Was our article political bias rating correct?</h4>
+                <div class="center">
+                  <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
+                  <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
+                    </div>
+                  <button id= 'submit' onclick="submitScore()">Submit</button>
+                </div>
+              </div> 
+            </a> 
+          </div>
+        </div>`
+      }
+
       function submitScore() {
         var clickedButton = event.target;
         var answerBox = clickedButton.closest('.record-box');
@@ -179,7 +222,7 @@
       function processArticles(data) {
         processFirstItem(JSON.parse(data[0]));
         processSecondItem(JSON.parse(data[1]));
-        //processThirdItem(JSON.parse(data[2]));
+        processThirdItem(JSON.parse(data[2]));
         //processFourthItem(JSON.parse(data[3]));
       }
 
@@ -205,6 +248,12 @@
 
       function processThirdItem(middlelist) {
         // Unbiased articles
+        middlelist.forEach((json) => {
+          console.log(json)
+          let tempDiv = document.createElement("div");
+          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          document.getElementById("middle-answer-box").appendChild(tempDiv);
+        });
       }
 
       function processFourthItem(alllist) {
