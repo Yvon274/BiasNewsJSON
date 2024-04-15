@@ -240,7 +240,7 @@ def three_search(query):
     all_matches_filtered = all_matches[[
         'title', 'text', 'score', 'url', 'date']]
 
-    left_matches_filtered = all_matches_filtered[all_matches_filtered['score'] < .05]
+    left_matches_filtered = all_matches_filtered[all_matches_filtered['score'] < -.05]
     right_matches_filtered = all_matches_filtered[all_matches_filtered['score'] > .05]
     middle_matches_filtered = all_matches_filtered[
         (all_matches_filtered['score'] > -
@@ -300,7 +300,7 @@ def articles_search():
     text = request.args.get("title")
     # return cos_search(text)]
     # new search has three fields:
-    # [[left_articles_json], [right_articles_json], [middle_articles_json], [all_articles_json]]
+    # [{left_articles_json}, {right_articles_json}, {middle_articles_json}, {all_articles_json}]
     # left, right, middle, all = three_search(text)
     return three_search(text)
 

@@ -25,24 +25,70 @@
     <!-- Search input -->
     <div class="header-and-form-box">
       <!--<h1 class="center-title">Bias Free News</h1>-->
-      <img class="center-banner" src="{{ url_for('static', filename='images/newlogo.png') }}">
+      <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
+
+      <!--<div id="container">
+        <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
+      </div>-->
 
       <div class="input-box" onclick="sendFocus()">
         <input placeholder="Search for an article topic" id="filter-text-val"
           onkeydown="if(event.keyCode===13) filterText()">
       </div>
 
+
       <div id="answer-box">
+        <div id="left-answer-box"> 
+        </div>
+        <div id="right-answer-box"> 
+        </div>
       </div>
 
     </div>
 
     <!-- Search results -->
     <script>
+
+    /*document.addEventListener("DOMContentLoaded", function() {
+        // Get the center banner element
+        var centerBanner = document.querySelector('.center-banner');
+        var container = document.getElementById('container');
+
+        // Create a new image element for the extended line
+        var extendedLine = new Image();
+        extendedLine.src = "{{ url_for('static', filename='images/whiteline.png') }}"; // Change to the path of your white line image
+        extendedLine.alt = 'Extended Line';
+        extendedLine.style.position = 'absolute';
+        extendedLine.style.left = (centerBanner.offsetLeft + centerBanner.width / 2) + 'px';
+        extendedLine.style.top = (centerBanner.offsetTop + centerBanner.height / 2) + 'px';
+        extendedLine.style.transform = 'translate(-50%, -50%)'; // Center the image
+        extendedLine.style.width = centerBanner.offsetWidth + 'px'; // Same width as centerBanner
+        extendedLine.style.height = '0px'; // Initially set height to 0
+        container.appendChild(extendedLine);
+
+        // Animate the extension of the line
+        var duration = 3000; // Animation duration in milliseconds
+        var start = null;
+        function extendLine(timestamp) {
+            if (!start) start = timestamp;
+            var progress = timestamp - start;
+            var percentage = progress / duration;
+            //extendedLine.style.width = (centerBanner.offsetWidth * percentage) + 'px';
+            extendedLine.style.height = (centerBanner.offsetHeight * 10 * percentage) + 'px';
+            if (progress < duration) {
+                requestAnimationFrame(extendLine);
+            }
+        }
+        requestAnimationFrame(extendLine);
+    });*/
+
+
+
       function mapValue(value, min1, max1, min2, max2) {
         return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
       }
-      function answerBoxTemplate(title, titleDesc, rating, url) {
+
+      function answerBoxTemplate(title, titleDesc, rating, url, date) {
         console.log(rating);
         let absrating = Math.abs(rating);
         console.log("absrating: " + absrating);
@@ -51,11 +97,11 @@
         let color_num = absrating + 0.2;
         console.log("color_num: " + color_num);
         // left
-        if (rating < -0.05) {
+        if (rating < 0.0) {
           color = "rgb(0, 168, 243," + color_num + ")"
 
           // right
-        } else if (rating > 0.05) {
+        } else if (rating > 0.0) {
           color = "rgb(236, 28, 36," + color_num + ")"
 
           // center
@@ -63,14 +109,15 @@
           color = "rgb(255, 255, 255, 1)"
         }
         marker = mapValue(rating, -1, 1, 0, 100)
-        /*ADD DATE TO ARTICLES XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
+        var date = new Date(date);
+        let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
         return `
         <div class='record-box'>
           <div class="record-box-overlay" style='background: ${color}'>
             <a class="link" href="${url}" target="_blank">
-              <h3 id = "title2" class='article-title'>${title}</h3></a>
+              <h3 id="title2" class='article-title'>${title}</h3>
+              <p class="date">${newdate}</p>
+            </a>
               <div class='slider-container'>
                   <h4>Was our article political bias rating correct?</h4>
                 <div class="center">
@@ -84,6 +131,7 @@
           </div>
         </div>`
       }
+
       function submitScore() {
         var clickedButton = event.target;
         var answerBox = clickedButton.closest('.record-box');
@@ -117,16 +165,57 @@
       }
 
       function filterText() {
-        document.getElementById("answer-box").innerHTML = ""
-        console.log(document.getElementById("filter-text-val").value)
+        document.getElementById("left-answer-box").innerHTML = "";
+        document.getElementById("right-answer-box").innerHTML = "";
+        //document.getElementById("middle-answer-box").innerHTML = "";
+        console.log(document.getElementById("filter-text-val").value);
         fetch("/articles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
           .then((response) => response.json())
-          .then((data) => data.forEach(row => {
-            let tempDiv = document.createElement("div")
-            tempDiv.innerHTML = answerBoxTemplate(row.title, (row.text.substring(0, 200) + "..."), row.score, row.url)
-            document.getElementById("answer-box").appendChild(tempDiv)
-          }));
+          .then((data) => {
+            processArticles(data);
+          });
+      }
 
+      function processArticles(data) {
+        processFirstItem(JSON.parse(data[0]));
+        processSecondItem(JSON.parse(data[1]));
+        //processThirdItem(JSON.parse(data[2]));
+        //processFourthItem(JSON.parse(data[3]));
+      }
+
+      function processFirstItem(leftlist) {
+        // Left biased articles
+        leftlist.forEach((json) => {
+          console.log(json)
+          let tempDiv = document.createElement("div");
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          document.getElementById("left-answer-box").appendChild(tempDiv);
+        });
+      }
+
+      function processSecondItem(rightlist) {
+        // Right biased articles
+        rightlist.forEach((json) => {
+          console.log(json)
+          let tempDiv = document.createElement("div");
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          document.getElementById("right-answer-box").appendChild(tempDiv);
+        });
+      }
+
+      function processThirdItem(middlelist) {
+        // Unbiased articles
+      }
+
+      function processFourthItem(alllist) {
+        console.log("row type: " + typeof alllist);
+        console.log("row: " + alllist)
+        alllist.forEach((json) => {
+          console.log(json)
+          let tempDiv = document.createElement("div");
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          document.getElementById("answer-box").appendChild(tempDiv);
+        });
       }
 
 
