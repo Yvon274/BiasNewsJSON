@@ -133,18 +133,7 @@ class QueryChecker:
     #
     #     return top_50_indices
 
-    def get_most_similar(self, query, data):
-        """Returns a float giving the cosine similarity of
-           the two movie transcripts.
-
-        Params: {query: query in string form.
-                 mov2 (str): Name of the article.
-                 input_doc_mat (numpy.ndarray): Term-document matrix of articles, where
-                        each row represents a document (movie transcript) and each column represents a term.
-                 movie_name_to_index (dict): Dictionary that maps movie names to the corresponding row index
-                        in the term-document matrix.}
-        Returns: Float (Cosine similarity of the two movie transcripts.)
-        """
+    def get_sim_score_order(self, query, data):
         self.data = data
 
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
@@ -167,6 +156,46 @@ class QueryChecker:
         cosine_similarities = cosine_similarity(
             query_tfidf, tfidf_matrix).flatten()
 
-        top_50_indices = np.argsort(cosine_similarities)[-75:][::-1]
+        return np.argsort(cosine_similarities)
 
-        return top_50_indices
+    def get_most_similar_by_category(self, query, data, num_articles = 75):
+        order = self.get_sim_score_order(query, data)[::-1]
+        ordered_data = data.iloc[order]
+
+        top_left_ind = []
+        top_right_ind = []
+        top_med_ind = []
+        top_ind = []
+
+
+        i = 0
+        while i < len(ordered_data) and (len(top_left_ind) < 75 or len(top_right_ind) < 75 or len(top_med_ind) < 75):
+            entry = ordered_data.iloc[i]
+            if entry['score'] < -0.1 and len(top_left_ind) < 75:
+                top_left_ind.append(order[i])
+            elif entry['score'] > 0.1 and len(top_right_ind) < 75:
+                top_right_ind.append(order[i])
+            elif len(top_med_ind) < 75:
+                top_med_ind.append(order[i])
+
+            if len(top_ind) < 75:
+                top_ind.append(order[i])
+
+            i += 1
+
+        return top_left_ind, top_right_ind, top_med_ind, top_ind
+
+
+
+
+    def get_most_similar(self, query, data):
+        """
+        Returns the indices of the top 75 matched articles to the query
+
+        @param query: The query used to obtain articles of interest
+        @param data: A dataframe containing all of the articles to compare the query to
+
+        @returns the indices of articles in `data` that had the highest similarity score to the query
+        """
+
+        return self.get_sim_score_order(query, data)[-75:][::-1]

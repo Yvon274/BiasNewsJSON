@@ -216,14 +216,13 @@ def three_searchv2(query):
     q = QueryChecker(query)
     # q.loadData('./temp4.json')
 
-    pos_articles_df = articles_df[articles_df['score'] > 1]
-    neg_articles_df = articles_df[articles_df['score'] < 1]
-    med_articles_df = articles_df[(articles_df['score'] >= -0.15) & (articles_df['score'] <= 0.15)]
+    pos_articles_df = articles_df[articles_df['score'] > .05]
+    neg_articles_df = articles_df[articles_df['score'] < -.05]
+    med_articles_df = articles_df[(articles_df['score'] > -0.05) & (articles_df['score'] < 0.05)]
 
-    pos_top_indices = q.get_most_similar(query.lower(), pos_articles_df)
-    neg_top_indices = q.get_most_similar(query.lower(), neg_articles_df)
-    med_top_indices = q.get_most_similar(query.lower(), med_articles_df)
-    all_top_indices = q.get_most_similar(query.lower(), articles_df)
+
+    neg_top_indices, pos_top_indices, med_top_indices, all_top_indices = (
+        q.get_most_similar_by_category(query.lower(), articles_df))
 
     pos_matches = articles_df.iloc[pos_top_indices]
     neg_matches = articles_df.iloc[neg_top_indices]
@@ -241,10 +240,6 @@ def three_searchv2(query):
     all_matches_filtered_json = all_matches_filtered.to_json(orient='records')
 
     return [neg_matches_filtered_json, pos_matches_filtered_json, med_matches_filtered_json, all_matches_filtered_json]
-
-
-
-
 
 
 
@@ -337,7 +332,7 @@ def articles_search():
     # new search has three fields:
     # [{left_articles_json}, {right_articles_json}, {middle_articles_json}, {all_articles_json}]
     # left, right, middle, all = three_search(text)
-    return three_search(text)
+    return three_searchv2(text)
 
 
 if 'DB_NAME' not in os.environ:
