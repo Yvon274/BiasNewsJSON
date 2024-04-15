@@ -238,18 +238,22 @@ main {
 
 .record-box-overlay {
   border-radius: 20px;
-  padding: 7px;
+  padding: 20px;
 }
 
 
 .record-box h3 {
   /*color: white;*/
   margin: 0px;
+  font-size: 16px;
+  font-weight: normal;
 }
 
 .date {
   margin-bottom: 0px;
   margin-top: 5px;
+  font-size: 13px;
+  align-self: right;
 }
 
 .record-box:hover .slider {
