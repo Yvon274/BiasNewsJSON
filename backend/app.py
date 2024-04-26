@@ -310,7 +310,7 @@ def feedback():
     title = data["title"]
     # If it is too far away from the original score it will be weighted less
     diff = abs(user_score - current_score)
-    weight = 1/(10+(4*diff))
+    weight = 1/((5*diff))
     new_score = (((1-weight)*current_score) + (weight*user_score))
     row_index = articles_df.loc[articles_df["title"] == title].index[0]
     articles_df.loc[row_index, 'score'] = new_score
