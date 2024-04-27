@@ -8,6 +8,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
     rel="stylesheet">
+  <style>
+    .header-and-form-box {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative;
+    }
+
+    #help-button {
+      width: 30px;
+      height: 30px;
+      background-color: #CCCCCC;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    #description-text {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      background-color: black;
+      padding: 10px;
+      border: 1px solid #CCCCCC;
+      border-radius: 5px;
+      z-index: 9998;
+      width: 30%;
+    }
+
+    #help-button:hover+#description-text {
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,14 +59,21 @@
     <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
   </div>
   <main>
+    <div class="description">
+      <div id="description-text" style="display: none;">Split is an election article search engine that separates
+        articles by political leaning calculated by our own models. We take user inputs to change the political leaning
+        score and converge towards more accurate scores.</div>
+    </div>
+    <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
+
     <!-- Search input -->
     <div class="header-and-form-box">
       <!--<h1 class="center-title">Bias Free News</h1>-->
       <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
-      <div class="description">Split is an election article search engine that seperates articles by political leaning
+      <!-- <div class="description">?Split is an election article search engine that seperates articles by political leaning
         calculated by our own models.
         We take user inputs
-        to change the political leaning score and converge towards more accurate scores.</div>
+        to change the political leaning score and converge towards more accurate scores.</div> -->
 
       <!--<div id="container">
         <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
@@ -219,6 +263,18 @@
         document.getElementById('filter-text-val').focus()
       }
 
+      function showDescription() {
+        document.getElementById('description-text').style.display = 'block';
+      }
+
+      function hideDescription() {
+        document.getElementById('description-text').style.display = 'none';
+      }
+
+      function sendFocus() {
+        document.getElementById('filter-text-val').focus();
+      }
+
       function filterText() {
         document.getElementById("left-answer-box").innerHTML = "";
         document.getElementById("right-answer-box").innerHTML = "";
@@ -229,7 +285,13 @@
           .then((response) => response.json())
           .then((data) => {
             processArticles(data);
+            //showWhiteBar();
           });
+      }
+
+      function showWhiteBar() {
+        var whiteBar = document.querySelector('body::after');
+        whiteBar.style.display = 'block';
       }
 
       function processArticles(data) {
@@ -279,7 +341,6 @@
           document.getElementById("answer-box").appendChild(tempDiv);
         });
       }
-
 
 
     </script>
