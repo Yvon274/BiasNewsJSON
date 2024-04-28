@@ -3,6 +3,7 @@ import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from rapidfuzz import process, fuzz
+from nltk.stem import SnowballStemmer
 
 
 def get_edit_distance(s1, s2):
@@ -56,6 +57,10 @@ class QueryChecker:
         self.query = query
         self.docs = docs
         self.topArticles = []
+        self.stemmer = SnowballStemmer("english")
+
+    def stem_query(self, query):
+        return ' '.join([self.stemmer.stem(word) for word in query.split()])
 
     def build_vectorizer(self, max_features, stop_words, max_df=0.8, min_df=10, norm='l2'):
         """Sets a TfidfVectorizer object with the above preprocessing properties.
@@ -148,10 +153,11 @@ class QueryChecker:
         for word in query.split(' '):
             filtered_query += process.extractOne(word, vocab)[0] + ' '
         filtered_query = filtered_query.strip()
+        stemmed_query = self.stem_query(filtered_query)
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
 
-        query_tfidf = vectorizer.transform([filtered_query])
+        query_tfidf = vectorizer.transform([stemmed_query])
 
         cosine_similarities = cosine_similarity(
             query_tfidf, tfidf_matrix).flatten()
@@ -182,7 +188,6 @@ class QueryChecker:
                 top_ind.append(order[i])
 
             i += 1
-
         return top_left_ind, top_right_ind, top_med_ind, top_ind
 
 
