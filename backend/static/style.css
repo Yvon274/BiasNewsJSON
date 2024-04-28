@@ -5,11 +5,15 @@ header {
   padding: 5px;
 }
 
-
 body {
   margin: 0px;
   font-family: Arial, Helvetica, sans-serif;
   background: black;
+}
+
+.score {
+  margin-top: 10px;
+  font-size: 0.75em;
 }
 
 .description {
@@ -113,7 +117,12 @@ body {
   }
 }
 
-body::after {
+.expand-animation {
+  display: block;
+  animation: expand 1s linear forwards;
+}
+
+.line {
   content: "";
   position: fixed;
   top: 0;
@@ -121,7 +130,6 @@ body::after {
   width: 21px;
   height: 0;
   background-color: white;
-  animation: expand 0.5s linear forwards;
   z-index: -1;
   left: 49.2%;
 }
