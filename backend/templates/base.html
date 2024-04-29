@@ -16,6 +16,28 @@
       position: relative;
     }
 
+    .header-buttons {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      z-index: 999;
+      /* Adjust as needed */
+    }
+
+    .feedback-mode {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 10px;
+    }
+
+    .description {
+      color: white;
+    }
+
     #help-button {
       width: 30px;
       height: 30px;
@@ -25,13 +47,16 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      margin-right: 10px;
+      position: fixed;
+      z-index: 9999;
+      /* Ensure it's above other elements */
     }
+
 
     #description-text {
       display: none;
       position: absolute;
-      top: 50px;
+      top: 35px;
       left: 10px;
       background-color: black;
       padding: 10px;
@@ -59,13 +84,28 @@
     <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
   </div>
   <main>
-    <div class="description">
-      <div id="description-text" style="display: none;">Split is an election article search engine that separates
-        articles by political leaning calculated by our own models. We take user inputs to change the political leaning
-        score and converge towards more accurate scores. We show the score for how left or right an article is with 0
-        being unbiased and 1 being very biased. We also show the number of votes that have led to scores changing.</div>
+    <div class="header-buttons">
+      <div class="description">
+        <div id="description-text" style="display: none; position: fixed; z-index: 999;">Welcome to Split, your go-to
+          election
+          article search engine!
+          We
+          categorize articles by political leanings using sentiment analysis algorithms and user inputs for accuracy.
+          Our scores
+          range from 0 (neutral) to 1 (highly biased), accompanied by vote counts for transparency. Click on 'Feedback
+          Mode' to enter your own opinion about an article. Navigate the
+          political
+          landscape with confidence at Split!</div>
+      </div>
+      <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
     </div>
-    <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
+    <div class="feedback-mode">
+      <input type="checkbox" id="feedback-mode-checkbox">
+      <label for="feedback-mode-checkbox"
+        style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Feedback
+        Mode</label>
+    </div>
+
 
     <!-- Search input -->
     <div class="header-and-form-box">
@@ -83,18 +123,6 @@
 
       <hr id="line" class="line">
 
-      <!--<div id="answer-box">
-        <div id="middle-answer-box">
-
-        </div>
-        <div id="split-answer-box">
-          <div id="left-answer-box"> 
-          </div>
-          <div id="right-answer-box"> 
-          </div>
-        </div>
-      </div>-->
-
       <div id="answer-box">
         <div id="left-answer-box">
         </div>
@@ -108,6 +136,20 @@
 
     <!-- Search results -->
     <script>
+
+      window.onload = function () {
+        toggleFeedbackMode(); // Call toggleFeedbackMode when the page loads
+      };
+
+      function toggleFeedbackMode() {
+        var check = document.getElementById('feedback-mode-checkbox');
+        if (check.checked) {
+          disableFeedback();
+        } else {
+          enableFeedback();
+        }
+      }
+
 
       /*document.addEventListener("DOMContentLoaded", function() {
           // Get the center banner element
@@ -182,12 +224,11 @@
             <p class="date">${newdate}</p>
             <div class="score">Political leaning score: ${absrating}</div>
               <div class='slider-container'>
-                  <h4>Was our article political bias rating correct?</h4>
+                <h4>Add your own rating of this article!</h4>
                 <div class="center">
                   <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
                   <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
                     </div>
-                    <div class="votes">Votes: ${votes}</div>
                   <button id= 'submit' onclick="submitScore()" data-votes="${votes}">Submit</button>
                 </div>
               </div> 
@@ -212,13 +253,12 @@
             </a>
             <p class="date">${newdate}</p>
               <div class='slider-container'>
-                  <h4>Was our article political bias rating correct?</h4>
+                  <h4>Add your own rating of this article!</h4>
                 <div class="center">
                   <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
                   <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
                     </div>
-                    <div class="votes">Votes: ${votes}</div>
-                  <button id= 'submit' onclick="submitScore()">Submit</button>
+                  <button style='margin-top: 0px' id= 'submit' onclick="submitScore()">Submit</button>
                 </div>
               </div> 
             </a> 
@@ -284,6 +324,7 @@
           .then((response) => response.json())
           .then((data) => {
             processArticles(data);
+            toggleFeedbackMode();
             //showWhiteBar();
           });
         document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
@@ -347,6 +388,62 @@
         });
       }
 
+      var descriptionText = document.getElementById('description-text');
+      var helpButton = document.getElementById('help-button');
+
+      // Show description when mouse enters help button or description box
+      helpButton.addEventListener('mouseover', function () {
+        descriptionText.style.display = 'block';
+      });
+
+      descriptionText.addEventListener('mouseover', function () {
+        descriptionText.style.display = 'block';
+      });
+
+      // Hide description when mouse leaves help button or description box
+      helpButton.addEventListener('mouseleave', function () {
+        descriptionText.style.display = 'none';
+      });
+
+      descriptionText.addEventListener('mouseleave', function (event) {
+        // Check if the mouse is not over the help button when leaving the description box
+        if (!helpButton.contains(event.relatedTarget)) {
+          descriptionText.style.display = 'none';
+        }
+      });
+
+      // Function to toggle feedback mode based on checkbox state
+      function toggleFeedbackMode() {
+        var feedbackModeCheckbox = document.getElementById('feedback-mode-checkbox');
+        var recordBoxes = document.querySelectorAll('.record-box-overlay');
+
+        if (feedbackModeCheckbox.checked) {
+          // Enable feedback mode
+          recordBoxes.forEach(box => {
+            box.addEventListener('mouseenter', enableFeedback);
+            box.addEventListener('mouseleave', disableFeedback);
+          });
+        } else {
+          // Disable feedback mode
+          recordBoxes.forEach(box => {
+            box.removeEventListener('mouseenter', enableFeedback);
+            box.removeEventListener('mouseleave', disableFeedback);
+          });
+        }
+      }
+
+      // Function to enable feedback mode on mouse enter
+      function enableFeedback() {
+        this.querySelector('.slider-container').style.display = 'block';
+      }
+
+      // Function to disable feedback mode on mouse leave
+      function disableFeedback() {
+        this.querySelector('.slider-container').style.display = 'none';
+      }
+
+      // Event listener for checkbox change
+      document.getElementById('feedback-mode-checkbox').addEventListener('change', toggleFeedbackMode);
 
     </script>
   </main>
