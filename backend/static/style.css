@@ -302,9 +302,9 @@ main {
   display: block;
 }
 
-.record-box:hover .slider-container {
+/*.record-box:hover .slider-container {
   display: block;
-}
+} */
 
 .slider {
   display: none;
