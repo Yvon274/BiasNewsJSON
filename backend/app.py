@@ -23,10 +23,11 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 # Specify the path to the JSON file relative to the current script
 json_file_path = os.path.join(current_directory, 'temp4.json')
 
-# # Assuming your JSON data is stored in a file named 'init.json'
+# Assuming your JSON data is stored in a file named 'init.json'
 with open(json_file_path, 'r') as file:
     data = json.load(file)
     articles_df = pd.DataFrame(data['articles'])
+    print(articles_df)
 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -216,24 +217,23 @@ def three_searchv2(query):
     q = QueryChecker(query)
     # q.loadData('./temp4.json')
 
-    pos_articles_df = articles_df[articles_df['score'] > 1]
-    neg_articles_df = articles_df[articles_df['score'] < 1]
-    med_articles_df = articles_df[(articles_df['score'] >= -0.15) & (articles_df['score'] <= 0.15)]
+    pos_articles_df = articles_df[articles_df['score'] > .05]
+    neg_articles_df = articles_df[articles_df['score'] < -.05]
+    med_articles_df = articles_df[(articles_df['score'] > -0.05) & (articles_df['score'] < 0.05)]
 
-    pos_top_indices = q.get_most_similar(query.lower(), pos_articles_df)
-    neg_top_indices = q.get_most_similar(query.lower(), neg_articles_df)
-    med_top_indices = q.get_most_similar(query.lower(), med_articles_df)
-    all_top_indices = q.get_most_similar(query.lower(), articles_df)
+
+    neg_top_indices, pos_top_indices, med_top_indices, all_top_indices = (
+        q.get_most_similar_by_category(query.lower(), articles_df))
 
     pos_matches = articles_df.iloc[pos_top_indices]
     neg_matches = articles_df.iloc[neg_top_indices]
     med_matches = articles_df.iloc[med_top_indices]
     all_matches = articles_df.iloc[all_top_indices]
 
-    pos_matches_filtered = pos_matches[['title', 'text', 'score', 'url']]
-    neg_matches_filtered = neg_matches[['title', 'text', 'score', 'url']]
-    med_matches_filtered = med_matches[['title', 'text', 'score', 'url']]
-    all_matches_filtered = all_matches[['title', 'text', 'score', 'url']]
+    pos_matches_filtered = pos_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
+    neg_matches_filtered = neg_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
+    med_matches_filtered = med_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
+    all_matches_filtered = all_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
 
     pos_matches_filtered_json = pos_matches_filtered.to_json(orient='records')
     neg_matches_filtered_json = neg_matches_filtered.to_json(orient='records')
@@ -241,10 +241,6 @@ def three_searchv2(query):
     all_matches_filtered_json = all_matches_filtered.to_json(orient='records')
 
     return [neg_matches_filtered_json, pos_matches_filtered_json, med_matches_filtered_json, all_matches_filtered_json]
-
-
-
-
 
 
 
@@ -315,7 +311,7 @@ def feedback():
     title = data["title"]
     # If it is too far away from the original score it will be weighted less
     diff = abs(user_score - current_score)
-    weight = 1/(10+(4*diff))
+    weight = 1/((5*diff))
     new_score = (((1-weight)*current_score) + (weight*user_score))
     row_index = articles_df.loc[articles_df["title"] == title].index[0]
     articles_df.loc[row_index, 'score'] = new_score
@@ -324,7 +320,7 @@ def feedback():
         for item in dataset["articles"]:
             if item["title"] == title:
                 item["score"] = new_score
-
+                item["votes"] += 1
         with open("temp4.json", "w") as file:
             json.dump(dataset, file, indent=4)
     return "done"
@@ -337,7 +333,7 @@ def articles_search():
     # new search has three fields:
     # [{left_articles_json}, {right_articles_json}, {middle_articles_json}, {all_articles_json}]
     # left, right, middle, all = three_search(text)
-    return three_search(text)
+    return three_searchv2(text)
 
 
 if 'DB_NAME' not in os.environ:

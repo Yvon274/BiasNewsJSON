@@ -71,6 +71,10 @@
     <div class="header-and-form-box">
       <!--<h1 class="center-title">Bias Free News</h1>-->
       <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
+      <!-- <div class="description">?Split is an election article search engine that seperates articles by political leaning
+        calculated by our own models.
+        We take user inputs
+        to change the political leaning score and converge towards more accurate scores.</div> -->
 
       <div class="input-box" onclick="sendFocus()">
         <input placeholder="Search for an article topic" id="filter-text-val"
@@ -280,8 +284,14 @@
           .then((response) => response.json())
           .then((data) => {
             processArticles(data);
+            //showWhiteBar();
           });
         document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
+      }
+
+      function showWhiteBar() {
+        var whiteBar = document.querySelector('body::after');
+        whiteBar.style.display = 'block';
       }
 
       function showWhiteBar() {
