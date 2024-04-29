@@ -8,6 +8,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
     rel="stylesheet">
+  <style>
+    .header-and-form-box {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      position: relative;
+    }
+
+    #help-button {
+      width: 30px;
+      height: 30px;
+      background-color: #CCCCCC;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    #description-text {
+      display: none;
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      background-color: black;
+      padding: 10px;
+      border: 1px solid #CCCCCC;
+      border-radius: 5px;
+      z-index: 9998;
+      width: 30%;
+    }
+
+    #help-button:hover+#description-text {
+      display: block;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,20 +59,25 @@
     <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
   </div>
   <main>
+    <div class="description">
+      <div id="description-text" style="display: none;">Split is an election article search engine that separates
+        articles by political leaning calculated by our own models. We take user inputs to change the political leaning
+        score and converge towards more accurate scores. We show the score for how left or right an article is with 0
+        being unbiased and 1 being very biased. We also show the number of votes that have led to scores changing.</div>
+    </div>
+    <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
+
     <!-- Search input -->
     <div class="header-and-form-box">
       <!--<h1 class="center-title">Bias Free News</h1>-->
       <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
-
-      <!--<div id="container">
-        <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
-      </div>-->
 
       <div class="input-box" onclick="sendFocus()">
         <input placeholder="Search for an article topic" id="filter-text-val"
           onkeydown="if(event.keyCode===13) filterText()">
       </div>
 
+      <hr id="line" class="line">
 
       <!--<div id="answer-box">
         <div id="middle-answer-box">
@@ -50,11 +92,11 @@
       </div>-->
 
       <div id="answer-box">
-        <div id="left-answer-box"> 
+        <div id="left-answer-box">
         </div>
         <div id="middle-answer-box">
         </div>
-        <div id="right-answer-box"> 
+        <div id="right-answer-box">
         </div>
       </div>
 
@@ -63,46 +105,48 @@
     <!-- Search results -->
     <script>
 
-    /*document.addEventListener("DOMContentLoaded", function() {
-        // Get the center banner element
-        var centerBanner = document.querySelector('.center-banner');
-        var container = document.getElementById('container');
+      /*document.addEventListener("DOMContentLoaded", function() {
+          // Get the center banner element
+          var centerBanner = document.querySelector('.center-banner');
+          var container = document.getElementById('container');
+  
+          // Create a new image element for the extended line
+          var extendedLine = new Image();
+          extendedLine.src = "{{ url_for('static', filename='images/whiteline.png') }}"; // Change to the path of your white line image
+          extendedLine.alt = 'Extended Line';
+          extendedLine.style.position = 'absolute';
+          extendedLine.style.left = (centerBanner.offsetLeft + centerBanner.width / 2) + 'px';
+          extendedLine.style.top = (centerBanner.offsetTop + centerBanner.height / 2) + 'px';
+          extendedLine.style.transform = 'translate(-50%, -50%)'; // Center the image
+          extendedLine.style.width = centerBanner.offsetWidth + 'px'; // Same width as centerBanner
+          extendedLine.style.height = '0px'; // Initially set height to 0
+          container.appendChild(extendedLine);
+  
+          // Animate the extension of the line
+          var duration = 3000; // Animation duration in milliseconds
+          var start = null;
+          function extendLine(timestamp) {
+              if (!start) start = timestamp;
+              var progress = timestamp - start;
+              var percentage = progress / duration;
+              //extendedLine.style.width = (centerBanner.offsetWidth * percentage) + 'px';
+              extendedLine.style.height = (centerBanner.offsetHeight * 10 * percentage) + 'px';
+              if (progress < duration) {
+                  requestAnimationFrame(extendLine);
+              }
+          }
+          requestAnimationFrame(extendLine);
+      });*/
 
-        // Create a new image element for the extended line
-        var extendedLine = new Image();
-        extendedLine.src = "{{ url_for('static', filename='images/whiteline.png') }}"; // Change to the path of your white line image
-        extendedLine.alt = 'Extended Line';
-        extendedLine.style.position = 'absolute';
-        extendedLine.style.left = (centerBanner.offsetLeft + centerBanner.width / 2) + 'px';
-        extendedLine.style.top = (centerBanner.offsetTop + centerBanner.height / 2) + 'px';
-        extendedLine.style.transform = 'translate(-50%, -50%)'; // Center the image
-        extendedLine.style.width = centerBanner.offsetWidth + 'px'; // Same width as centerBanner
-        extendedLine.style.height = '0px'; // Initially set height to 0
-        container.appendChild(extendedLine);
 
-        // Animate the extension of the line
-        var duration = 3000; // Animation duration in milliseconds
-        var start = null;
-        function extendLine(timestamp) {
-            if (!start) start = timestamp;
-            var progress = timestamp - start;
-            var percentage = progress / duration;
-            //extendedLine.style.width = (centerBanner.offsetWidth * percentage) + 'px';
-            extendedLine.style.height = (centerBanner.offsetHeight * 10 * percentage) + 'px';
-            if (progress < duration) {
-                requestAnimationFrame(extendLine);
-            }
-        }
-        requestAnimationFrame(extendLine);
-    });*/
-
-
-
+      function startAnimation() {
+        document.body.classList.add('expanded');
+      }
       function mapValue(value, min1, max1, min2, max2) {
         return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
       }
 
-      function answerBoxTemplate(title, titleDesc, rating, url, date) {
+      function answerBoxTemplate(title, titleDesc, rating, url, date, votes) {
         console.log(rating);
         let absrating = Math.abs(rating);
         console.log("absrating: " + absrating);
@@ -130,15 +174,17 @@
           <div class="record-box-overlay" style='background: ${color}'>
             <a class="link" href="${url}" target="_blank">
               <h3 id="title2" class='article-title'>${title}</h3>
-              <p class="date">${newdate}</p>
             </a>
+            <p class="date">${newdate}</p>
+            <div class="score">Political leaning score: ${absrating}</div>
               <div class='slider-container'>
                   <h4>Was our article political bias rating correct?</h4>
                 <div class="center">
                   <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
                   <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
                     </div>
-                  <button id= 'submit' onclick="submitScore()">Submit</button>
+                    <div class="votes">Votes: ${votes}</div>
+                  <button id= 'submit' onclick="submitScore()" data-votes="${votes}">Submit</button>
                 </div>
               </div> 
             </a> 
@@ -146,7 +192,7 @@
         </div>`
       }
 
-      function middleAnswerBoxTemplate(title, titleDesc, rating, url, date) {
+      function middleAnswerBoxTemplate(title, titleDesc, rating, url, date, votes) {
         console.log(rating);
         let direction;
         let directionclass;
@@ -159,14 +205,15 @@
           <div class="record-box-overlay" style='background: ${color}'>
             <a class="link" href="${url}" target="_blank">
               <h3 id="title2" class='article-title'>${title}</h3>
-              <p class="date">${newdate}</p>
             </a>
+            <p class="date">${newdate}</p>
               <div class='slider-container'>
                   <h4>Was our article political bias rating correct?</h4>
                 <div class="center">
                   <input id = 'slider' type='range' min = '0' max='100' value='50' class='slider'>
                   <div id="fixedMarker" class="fixed-marker" style="left: ${marker}%;">
                     </div>
+                    <div class="votes">Votes: ${votes}</div>
                   <button id= 'submit' onclick="submitScore()">Submit</button>
                 </div>
               </div> 
@@ -175,8 +222,10 @@
         </div>`
       }
 
+
       function submitScore() {
         var clickedButton = event.target;
+        var votes = parseInt(clickedButton.dataset.votes);
         var answerBox = clickedButton.closest('.record-box');
         var slider = answerBox.querySelector('.slider');
         var titleElement = answerBox.querySelector('.article-title');
@@ -197,7 +246,7 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_score: score, current_score: marker, title: title }),
+          body: JSON.stringify({ user_score: score, current_score: marker, title: title, votes: votes }),
         }).catch(error => {
           console.error('Error', error)
         })
@@ -207,7 +256,21 @@
         document.getElementById('filter-text-val').focus()
       }
 
+      function showDescription() {
+        document.getElementById('description-text').style.display = 'block';
+      }
+
+      function hideDescription() {
+        document.getElementById('description-text').style.display = 'none';
+      }
+
+      function sendFocus() {
+        document.getElementById('filter-text-val').focus();
+      }
+
       function filterText() {
+        var line = document.getElementById("line");
+        line.classList.add('expand-animation');
         document.getElementById("left-answer-box").innerHTML = "";
         document.getElementById("right-answer-box").innerHTML = "";
         document.getElementById("middle-answer-box").innerHTML = "";
@@ -218,6 +281,12 @@
           .then((data) => {
             processArticles(data);
           });
+        document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
+      }
+
+      function showWhiteBar() {
+        var whiteBar = document.querySelector('body::after');
+        whiteBar.style.display = 'block';
       }
 
       function processArticles(data) {
@@ -232,7 +301,7 @@
         leftlist.forEach((json) => {
           console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("left-answer-box").appendChild(tempDiv);
         });
       }
@@ -242,7 +311,7 @@
         rightlist.forEach((json) => {
           console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("right-answer-box").appendChild(tempDiv);
         });
       }
@@ -252,7 +321,7 @@
         middlelist.forEach((json) => {
           console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("middle-answer-box").appendChild(tempDiv);
         });
       }
@@ -263,11 +332,10 @@
         alllist.forEach((json) => {
           console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("answer-box").appendChild(tempDiv);
         });
       }
-
 
 
     </script>
