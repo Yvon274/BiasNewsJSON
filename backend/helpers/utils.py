@@ -149,16 +149,17 @@ class QueryChecker:
         vocab = set(words_list)
 
         # FILTER QUERY SO THAT IT ONLY INCLUDES TERMS IN THE DOCUMENTS
+        stemmed_query = self.stem_query(query)
         filtered_query = ''
-        for word in query.split(' '):
+        for word in stemmed_query.split(' '):
             filtered_query += process.extractOne(word, vocab)[0] + ' '
         filtered_query = filtered_query.strip()
-        # stemmed_query = self.stem_query(filtered_query)
-        stemmed_query = filtered_query
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
 
-        query_tfidf = vectorizer.transform([stemmed_query])
+        print(filtered_query)
+
+        query_tfidf = vectorizer.transform([filtered_query])
 
         cosine_similarities = cosine_similarity(
             query_tfidf, tfidf_matrix).flatten()
