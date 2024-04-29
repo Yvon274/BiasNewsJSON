@@ -153,7 +153,8 @@ class QueryChecker:
         for word in query.split(' '):
             filtered_query += process.extractOne(word, vocab)[0] + ' '
         filtered_query = filtered_query.strip()
-        stemmed_query = self.stem_query(filtered_query)
+        # stemmed_query = self.stem_query(filtered_query)
+        stemmed_query = filtered_query
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
 
