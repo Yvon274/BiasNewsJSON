@@ -34,6 +34,13 @@
       padding: 10px;
     }
 
+    .lean-mode {
+      position: fixed;
+      top: 40px;
+      right: 0;
+      padding: 10px;
+    }
+
     .description {
       color: white;
     }
@@ -51,7 +58,6 @@
       z-index: 9999;
       /* Ensure it's above other elements */
     }
-
 
     #description-text {
       display: none;
@@ -87,23 +93,26 @@
     <div class="header-buttons">
       <div class="description">
         <div id="description-text" style="display: none; position: fixed; z-index: 999;">Welcome to Split, your go-to
-          election
-          article search engine!
-          We
-          categorize articles by political leanings using sentiment analysis algorithms and user inputs for accuracy.
-          Our scores
-          range from 0 (neutral) to 1 (highly biased), accompanied by vote counts for transparency. Click on 'Feedback
-          Mode' to enter your own opinion about an article. Navigate the
-          political
-          landscape with confidence at Split!</div>
+          election article search engine! We categorize articles by political leanings using sentiment analysis
+          algorithms and user inputs for accuracy. Our scores range from 0 (neutral) to 1 (highly biased), accompanied
+          by vote counts for transparency. Click on 'Feedback Mode' to enter your own opinion about an article, or 'Bias
+          Magnitude Mode' to order articles by Bias Score after relevance. Navigate the political landscape with
+          confidence at Split!
+        </div>
       </div>
       <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
-    </div>
-    <div class="feedback-mode">
-      <input type="checkbox" id="feedback-mode-checkbox">
-      <label for="feedback-mode-checkbox"
-        style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Feedback
-        Mode</label>
+      <div class="feedback-mode">
+        <input type="checkbox" id="feedback-mode-checkbox">
+        <label for="feedback-mode-checkbox"
+          style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Feedback
+          Mode</label>
+      </div>
+      <div class="lean-mode">
+        <input type="checkbox" id="lean-mode-checkbox">
+        <label for="lean-mode-checkbox"
+          style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Bias
+          Magnitude Sort</label>
+      </div>
     </div>
 
 
@@ -136,7 +145,6 @@
 
     <!-- Search results -->
     <script>
-
       window.onload = function () {
         toggleFeedbackMode(); // Call toggleFeedbackMode when the page loads
       };
@@ -150,44 +158,60 @@
         }
       }
 
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get the lean mode checkbox element
+        var leanModeCheckbox = document.getElementById('lean-mode-checkbox');
+
+        // Add event listener to the lean mode checkbox
+        leanModeCheckbox.addEventListener('change', toggleLeanMode);
+      });
+
+      function toggleLeanMode() {
+        var check = document.getElementById('lean-mode-checkbox');
+        var search = document.getElementById("filter-text-val").value;
+        if (search !== "") { // Check if the search input field is not empty
+          filterText();
+        }
+      }
 
       /*document.addEventListener("DOMContentLoaded", function() {
-          // Get the center banner element
-          var centerBanner = document.querySelector('.center-banner');
-          var container = document.getElementById('container');
-  
-          // Create a new image element for the extended line
-          var extendedLine = new Image();
-          extendedLine.src = "{{ url_for('static', filename='images/whiteline.png') }}"; // Change to the path of your white line image
-          extendedLine.alt = 'Extended Line';
-          extendedLine.style.position = 'absolute';
-          extendedLine.style.left = (centerBanner.offsetLeft + centerBanner.width / 2) + 'px';
-          extendedLine.style.top = (centerBanner.offsetTop + centerBanner.height / 2) + 'px';
-          extendedLine.style.transform = 'translate(-50%, -50%)'; // Center the image
-          extendedLine.style.width = centerBanner.offsetWidth + 'px'; // Same width as centerBanner
-          extendedLine.style.height = '0px'; // Initially set height to 0
-          container.appendChild(extendedLine);
-  
-          // Animate the extension of the line
-          var duration = 3000; // Animation duration in milliseconds
-          var start = null;
-          function extendLine(timestamp) {
-              if (!start) start = timestamp;
-              var progress = timestamp - start;
-              var percentage = progress / duration;
-              //extendedLine.style.width = (centerBanner.offsetWidth * percentage) + 'px';
-              extendedLine.style.height = (centerBanner.offsetHeight * 10 * percentage) + 'px';
-              if (progress < duration) {
-                  requestAnimationFrame(extendLine);
-              }
-          }
-          requestAnimationFrame(extendLine);
-      });*/
+    // Get the center banner element
+    var centerBanner = document.querySelector('.center-banner');
+    var container = document.getElementById('container');
+ 
+    // Create a new image element for the extended line
+    var extendedLine = new Image();
+    extendedLine.src = "{{ url_for('static', filename='images/whiteline.png') }}"; // Change to the path of your white line image
+    extendedLine.alt = 'Extended Line';
+    extendedLine.style.position = 'absolute';
+    extendedLine.style.left = (centerBanner.offsetLeft + centerBanner.width / 2) + 'px';
+    extendedLine.style.top = (centerBanner.offsetTop + centerBanner.height / 2) + 'px';
+    extendedLine.style.transform = 'translate(-50%, -50%)'; // Center the image
+    extendedLine.style.width = centerBanner.offsetWidth + 'px'; // Same width as centerBanner
+    extendedLine.style.height = '0px'; // Initially set height to 0
+    container.appendChild(extendedLine);
+ 
+    // Animate the extension of the line
+    var duration = 3000; // Animation duration in milliseconds
+    var start = null;
+    function extendLine(timestamp) {
+        if (!start) start = timestamp;
+        var progress = timestamp - start;
+        var percentage = progress / duration;
+        //extendedLine.style.width = (centerBanner.offsetWidth * percentage) + 'px';
+        extendedLine.style.height = (centerBanner.offsetHeight * 10 * percentage) + 'px';
+        if (progress < duration) {
+            requestAnimationFrame(extendLine);
+        }
+    }
+    requestAnimationFrame(extendLine);
+});*/
 
 
       function startAnimation() {
         document.body.classList.add('expanded');
       }
+
       function mapValue(value, min1, max1, min2, max2) {
         return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
       }
@@ -302,18 +326,15 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user_score: score, current_score: marker, title: title, votes: votes }),
+          body: JSON.stringify({
+            user_score: score,
+            current_score: marker,
+            title: title,
+            votes: votes
+          }),
         }).catch(error => {
           console.error('Error', error)
         })
-      }
-
-      function showModal(title) {
-        document.getElementById(title).showModal();
-      }
-
-      function closeModal(title) {
-        document.getElementById(title).close();
       }
 
       function sendFocus() {
@@ -338,14 +359,21 @@
         document.getElementById("left-answer-box").innerHTML = "";
         document.getElementById("right-answer-box").innerHTML = "";
         document.getElementById("middle-answer-box").innerHTML = "";
+        var check = document.getElementById('lean-mode-checkbox');
         //document.getElementById("middle-answer-box").innerHTML = "";
         console.log(document.getElementById("filter-text-val").value);
-        fetch("/articles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
+        fetch("/articles?" + new URLSearchParams({
+          title: document.getElementById("filter-text-val").value
+        }).toString())
           .then((response) => response.json())
           .then((data) => {
-            processArticles(data);
-            toggleFeedbackMode();
-            //showWhiteBar();
+            if (check.checked) {
+              processArticlesByLean(data);
+              toggleFeedbackMode();
+            } else {
+              processArticles(data);
+              toggleFeedbackMode();
+            }
           });
         document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
       }
@@ -367,43 +395,61 @@
         //processFourthItem(JSON.parse(data[3]));
       }
 
+      function processArticlesByLean(data) {
+        left = JSON.parse(data[0]);
+        left.sort((a, b) => a.score - b.score);
+        processFirstItem(left);
+
+        right = JSON.parse(data[1]);
+        right.sort((a, b) => b.score - a.score);
+        processSecondItem(right);
+
+        center = JSON.parse(data[2]);
+        center.sort((a, b) => b.score - a.score);
+        processThirdItem(center);
+      }
+
+
       function processFirstItem(leftlist) {
         // Left biased articles
+        console.log(leftlist.length)
         leftlist.forEach((json) => {
-          console.log(json)
+          //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("left-answer-box").appendChild(tempDiv);
         });
       }
 
       function processSecondItem(rightlist) {
+        console.log(rightlist.length)
         // Right biased articles
         rightlist.forEach((json) => {
-          console.log(json)
+          //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("right-answer-box").appendChild(tempDiv);
         });
       }
 
       function processThirdItem(middlelist) {
+        console.log(middlelist.length)
         // Unbiased articles
         middlelist.forEach((json) => {
-          console.log(json)
+          //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
+          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("middle-answer-box").appendChild(tempDiv);
         });
       }
 
       function processFourthItem(alllist) {
-        console.log("row type: " + typeof alllist);
-        console.log("row: " + alllist)
+        //console.log("row type: " + typeof alllist);
+        //console.log("row: " + alllist)
         alllist.forEach((json) => {
-          console.log(json)
+          //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
           document.getElementById("answer-box").appendChild(tempDiv);
         });
       }
@@ -464,7 +510,6 @@
 
       // Event listener for checkbox change
       document.getElementById('feedback-mode-checkbox').addEventListener('change', toggleFeedbackMode);
-
     </script>
   </main>
 
