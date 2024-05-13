@@ -16,6 +16,44 @@ body {
   font-size: 0.75em;
 }
 
+.rel_sents {
+  margin-top: 0;
+  margin-bottom: 10px;
+  right: 0px;
+}
+
+.modal {
+  width: 75%;
+  border-width: 10px;
+}
+
+p {
+  width: 75%;
+}
+
+.open-button {
+  font-size: 10px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border-color: black;
+  margin-top: 0px;
+}
+
+.open-button:hover {
+  background: black;
+
+}
+
+.button {
+  text-align: center;
+}
+
+.close-button {
+  width: 50%;
+}
+
+
 .description {
   text-align: center;
   color: white;

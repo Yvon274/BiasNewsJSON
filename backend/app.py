@@ -176,8 +176,31 @@ def determine_political_leaning(text):
 
     return sum(result)/total_sent
 
+def relevant(text):
+    # Sentiment analysis
+    sentences = sent_tokenize(text)
+    total_sent = len(sentences)
+
+    # Get the polarity of each sentence in the text
+    result = []
+    for sentence in sentences:
+        sentiment_score = sid.polarity_scores(sentence)['compound']
+        sent_score = scorer(sentiment_score, sentence)
+        result.append(sent_score)
+
+    # Return the relevant sentences that were used in making the decision
+    indexes = list(enumerate(result))
+    sorted_scores = sorted(indexes, key=lambda x: x[1], reverse=True)
+    if sent_score <= 0:
+        top_3 = [index for index, _ in sorted_scores[-3:]]
+    else:
+        top_3 = [index for index, _ in sorted_scores[:3]]
+    relevant_sents = [(sentences[x], result[x]) for x in top_3]
+
+    return relevant_sents
 
 articles_df['score'] = articles_df['text'].apply(determine_political_leaning)
+articles_df['relevant_sentences'] = articles_df['text'].apply(relevant)
 
 json_data_with_scores = {
     'articles': articles_df.to_dict(orient='records')
@@ -197,7 +220,7 @@ CORS(app)
 def json_search(query):
     matches = articles_df[articles_df['title'].str.lower(
     ).str.contains(query.lower())]
-    matches_filtered = matches[['title', 'text', 'score', 'url']]
+    matches_filtered = matches[['title', 'text', 'score', 'url', 'votes', 'relevant_sentences']]
     matches_filtered_json = matches_filtered.to_json(orient='records')
     return matches_filtered_json
 
@@ -209,7 +232,7 @@ def cos_search(query):
     top_indices = q.get_most_similar(query.lower(), articles_df)
     matches = articles_df.iloc[top_indices]
 
-    matches_filtered = matches[['title', 'text', 'score', 'url']]
+    matches_filtered = matches[['title', 'text', 'score', 'url', 'votes', 'relevant_sentences']]
     matches_filtered_json = matches_filtered.to_json(orient='records')
     return matches_filtered_json
 
@@ -230,10 +253,10 @@ def three_searchv2(query):
     med_matches = articles_df.iloc[med_top_indices]
     all_matches = articles_df.iloc[all_top_indices]
 
-    pos_matches_filtered = pos_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
-    neg_matches_filtered = neg_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
-    med_matches_filtered = med_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
-    all_matches_filtered = all_matches[['title', 'text', 'score', 'url', 'date', 'votes']]
+    pos_matches_filtered = pos_matches[['title', 'text', 'score', 'url', 'date', 'votes', 'relevant_sentences']]
+    neg_matches_filtered = neg_matches[['title', 'text', 'score', 'url', 'date', 'votes', 'relevant_sentences']]
+    med_matches_filtered = med_matches[['title', 'text', 'score', 'url', 'date', 'votes', 'relevant_sentences']]
+    all_matches_filtered = all_matches[['title', 'text', 'score', 'url', 'date', 'votes', 'relevant_sentences']]
 
     pos_matches_filtered_json = pos_matches_filtered.to_json(orient='records')
     neg_matches_filtered_json = neg_matches_filtered.to_json(orient='records')
