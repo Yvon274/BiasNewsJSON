@@ -1,157 +1,170 @@
 <!doctype html>
 
 <head>
-  <title>Split</title>
-  <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap"
-    rel="stylesheet">
-  <style>
-    .header-and-form-box {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      position: relative;
-    }
-
-    .header-buttons {
-      position: fixed;
-      top: 0;
-      left: 0;
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      z-index: 999;
-      /* Adjust as needed */
-    }
-
-    .feedback-mode {
-      position: fixed;
-      top: 0;
-      right: 0;
-      padding: 10px;
-    }
-
-    .description {
-      color: white;
-    }
-
-    #help-button {
-      width: 30px;
-      height: 30px;
-      background-color: #CCCCCC;
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      position: fixed;
-      z-index: 9999;
-      /* Ensure it's above other elements */
-    }
-
-
-    #description-text {
-      display: none;
-      position: absolute;
-      top: 35px;
-      left: 10px;
-      background-color: black;
-      padding: 10px;
-      border: 1px solid #CCCCCC;
-      border-radius: 5px;
-      z-index: 9998;
-      width: 30%;
-    }
-
-    #help-button:hover+#description-text {
-      display: block;
-    }
-  </style>
+    <title>Split</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&family=Montserrat&family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+    <style>
+        .header-and-form-box {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            z-index: 999;
+            /* Adjust as needed */
+        }
+        
+        .feedback-mode {
+            position: fixed;
+            top: 0;
+            right: 0;
+            padding: 10px;
+        }
+        
+        .lean-mode {
+            position: fixed;
+            top: 40px;
+            right: 0;
+            padding: 10px;
+        }
+        
+        .description {
+            color: white;
+        }
+        
+        #help-button {
+            width: 30px;
+            height: 30px;
+            background-color: #CCCCCC;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: fixed;
+            z-index: 9999;
+            /* Ensure it's above other elements */
+        }
+        
+        #description-text {
+            display: none;
+            position: absolute;
+            top: 35px;
+            left: 10px;
+            background-color: black;
+            padding: 10px;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+            z-index: 9998;
+            width: 30%;
+        }
+        
+        #help-button:hover+#description-text {
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="logos">
-    <img src="{{ url_for('static', filename='logos/fox.png')}}" alt="fox">
-    <img src="{{ url_for('static', filename='logos/cnn.png')}}" alt="cnn">
-    <img src="{{ url_for('static', filename='logos/msnbc.png')}}" alt="msnbc">
-    <img src="{{ url_for('static', filename='logos/nyt.png')}}" alt="nyt">
-    <img src="{{ url_for('static', filename='logos/bbc.png')}}" alt="bbc">
-    <img src="{{ url_for('static', filename='logos/daily_mail.png')}}" alt="dm">
-    <img src="{{ url_for('static', filename='logos/cbs.png')}}" alt="cbs">
-    <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
-  </div>
-  <main>
-    <div class="header-buttons">
-      <div class="description">
-        <div id="description-text" style="display: none; position: fixed; z-index: 999;">Welcome to Split, your go-to
-          election
-          article search engine!
-          We
-          categorize articles by political leanings using sentiment analysis algorithms and user inputs for accuracy.
-          Our scores
-          range from 0 (neutral) to 1 (highly biased), accompanied by vote counts for transparency. Click on 'Feedback
-          Mode' to enter your own opinion about an article. Navigate the
-          political
-          landscape with confidence at Split!</div>
-      </div>
-      <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
+    <div class="logos">
+        <img src="{{ url_for('static', filename='logos/fox.png')}}" alt="fox">
+        <img src="{{ url_for('static', filename='logos/cnn.png')}}" alt="cnn">
+        <img src="{{ url_for('static', filename='logos/msnbc.png')}}" alt="msnbc">
+        <img src="{{ url_for('static', filename='logos/nyt.png')}}" alt="nyt">
+        <img src="{{ url_for('static', filename='logos/bbc.png')}}" alt="bbc">
+        <img src="{{ url_for('static', filename='logos/daily_mail.png')}}" alt="dm">
+        <img src="{{ url_for('static', filename='logos/cbs.png')}}" alt="cbs">
+        <img src="{{ url_for('static', filename='logos/morning.png')}}" alt="morning">
     </div>
-    <div class="feedback-mode">
-      <input type="checkbox" id="feedback-mode-checkbox">
-      <label for="feedback-mode-checkbox"
-        style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Feedback
-        Mode</label>
-    </div>
+    <main>
+        <div class="header-buttons">
+            <div class="description">
+                <div id="description-text" style="display: none; position: fixed; z-index: 999;">Welcome to Split, your go-to election article search engine! We categorize articles by political leanings using sentiment analysis algorithms and user inputs for accuracy. Our scores range from 0 (neutral) to 1 (highly biased), accompanied
+                    by vote counts for transparency. Click on 'Feedback Mode' to enter your own opinion about an article, or 'Bias Magnitude Mode' to order articles by Bias Score after relevance. Navigate the political landscape with confidence at Split!
+                </div>
+            </div>
+            <div id="help-button" onmouseover="showDescription()" onmouseout="hideDescription()">?</div>
+            <div class="feedback-mode">
+                <input type="checkbox" id="feedback-mode-checkbox">
+                <label for="feedback-mode-checkbox" style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Feedback Mode</label>
+            </div>
+            <div class="lean-mode">
+                <input type="checkbox" id="lean-mode-checkbox">
+                <label for="lean-mode-checkbox" style="background-color: #CCCCCC; color: black; padding: 5px 10px; border-radius: 5px; cursor: pointer; top: 20px;">Bias Magnitude Sort</label>
+            </div>
+        </div>
 
 
-    <!-- Search input -->
-    <div class="header-and-form-box">
-      <!--<h1 class="center-title">Bias Free News</h1>-->
-      <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
-      <!-- <div class="description">?Split is an election article search engine that seperates articles by political leaning
+        <!-- Search input -->
+        <div class="header-and-form-box">
+            <!--<h1 class="center-title">Bias Free News</h1>-->
+            <img class="center-banner" src="{{ url_for('static', filename='images/splitlogo.png') }}">
+            <!-- <div class="description">?Split is an election article search engine that seperates articles by political leaning
         calculated by our own models.
         We take user inputs
         to change the political leaning score and converge towards more accurate scores.</div> -->
 
-      <div class="input-box" onclick="sendFocus()">
-        <input placeholder="Search for an article topic" id="filter-text-val"
-          onkeydown="if(event.keyCode===13) filterText()">
-      </div>
+            <div class="input-box" onclick="sendFocus()">
+                <input placeholder="Search for an article topic" id="filter-text-val" onkeydown="if(event.keyCode===13) filterText()">
+            </div>
 
-      <hr id="line" class="line">
+            <hr id="line" class="line">
 
-      <div id="answer-box">
-        <div id="left-answer-box">
+            <div id="answer-box">
+                <div id="left-answer-box">
+                </div>
+                <div id="middle-answer-box">
+                </div>
+                <div id="right-answer-box">
+                </div>
+            </div>
+
         </div>
-        <div id="middle-answer-box">
-        </div>
-        <div id="right-answer-box">
-        </div>
-      </div>
 
-    </div>
+        <!-- Search results -->
+        <script>
+            window.onload = function() {
+                toggleFeedbackMode(); // Call toggleFeedbackMode when the page loads
+            };
 
-    <!-- Search results -->
-    <script>
+            function toggleFeedbackMode() {
+                var check = document.getElementById('feedback-mode-checkbox');
+                if (check.checked) {
+                    disableFeedback();
+                } else {
+                    enableFeedback();
+                }
+            }
 
-      window.onload = function () {
-        toggleFeedbackMode(); // Call toggleFeedbackMode when the page loads
-      };
+            document.addEventListener("DOMContentLoaded", function() {
+                // Get the lean mode checkbox element
+                var leanModeCheckbox = document.getElementById('lean-mode-checkbox');
 
-      function toggleFeedbackMode() {
-        var check = document.getElementById('feedback-mode-checkbox');
-        if (check.checked) {
-          disableFeedback();
-        } else {
-          enableFeedback();
-        }
-      }
+                // Add event listener to the lean mode checkbox
+                leanModeCheckbox.addEventListener('change', toggleLeanMode);
+            });
 
+            function toggleLeanMode() {
+                var check = document.getElementById('lean-mode-checkbox');
+                var search = document.getElementById("filter-text-val").value;
+                if (search !== "") { // Check if the search input field is not empty
+                    filterText();
+                }
+            }
 
-      /*document.addEventListener("DOMContentLoaded", function() {
+            /*document.addEventListener("DOMContentLoaded", function() {
           // Get the center banner element
           var centerBanner = document.querySelector('.center-banner');
           var container = document.getElementById('container');
@@ -185,37 +198,38 @@
       });*/
 
 
-      function startAnimation() {
-        document.body.classList.add('expanded');
-      }
-      function mapValue(value, min1, max1, min2, max2) {
-        return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
-      }
+            function startAnimation() {
+                document.body.classList.add('expanded');
+            }
 
-      function answerBoxTemplate(title, titleDesc, rating, url, date, votes) {
-        console.log(rating);
-        let absrating = Math.abs(rating);
-        console.log("absrating: " + absrating);
-        let direction;
-        let directionclass;
-        let color_num = absrating + 0.2;
-        console.log("color_num: " + color_num);
-        // left
-        if (rating < 0.0) {
-          color = "rgb(0, 168, 243," + color_num + ")"
+            function mapValue(value, min1, max1, min2, max2) {
+                return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+            }
 
-          // right
-        } else if (rating > 0.0) {
-          color = "rgb(236, 28, 36," + color_num + ")"
+            function answerBoxTemplate(title, titleDesc, rating, url, date, votes) {
+                //console.log(rating);
+                let absrating = Math.abs(rating);
+                //console.log("absrating: " + absrating);
+                let direction;
+                let directionclass;
+                let color_num = absrating + 0.2;
+                //console.log("color_num: " + color_num);
+                // left
+                if (rating < 0.0) {
+                    color = "rgb(0, 168, 243," + color_num + ")"
 
-          // center
-        } else {
-          color = "rgb(255, 255, 255, 1)"
-        }
-        marker = mapValue(rating, -1, 1, 0, 100)
-        var date = new Date(date);
-        let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
-        return `
+                    // right
+                } else if (rating > 0.0) {
+                    color = "rgb(236, 28, 36," + color_num + ")"
+
+                    // center
+                } else {
+                    color = "rgb(255, 255, 255, 1)"
+                }
+                marker = mapValue(rating, -1, 1, 0, 100)
+                var date = new Date(date);
+                let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
+                return `
         <div class='record-box'>
           <div class="record-box-overlay" style='background: ${color}'>
             <a class="link" href="${url}" target="_blank">
@@ -235,17 +249,17 @@
             </a> 
           </div>
         </div>`
-      }
+            }
 
-      function middleAnswerBoxTemplate(title, titleDesc, rating, url, date, votes) {
-        console.log(rating);
-        let direction;
-        let directionclass;
-        color = "rgb(255, 255, 255, 1)"
-        marker = mapValue(rating, -1, 1, 0, 100)
-        var date = new Date(date);
-        let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
-        return `
+            function middleAnswerBoxTemplate(title, titleDesc, rating, url, date, votes) {
+                //console.log(rating);
+                let direction;
+                let directionclass;
+                color = "rgb(255, 255, 255, 1)"
+                marker = mapValue(rating, -1, 1, 0, 100)
+                var date = new Date(date);
+                let newdate = ((date.getMonth() > 8) ? (date.getMonth() + 1) : ('0' + (date.getMonth() + 1))) + '/' + ((date.getDate() > 9) ? date.getDate() : ('0' + date.getDate())) + '/' + date.getFullYear();
+                return `
         <div class='record-box'>
           <div class="record-box-overlay" style='background: ${color}'>
             <a class="link" href="${url}" target="_blank">
@@ -264,188 +278,217 @@
             </a> 
           </div>
         </div>`
-      }
+            }
 
 
-      function submitScore() {
-        var clickedButton = event.target;
-        var votes = parseInt(clickedButton.dataset.votes);
-        var answerBox = clickedButton.closest('.record-box');
-        var slider = answerBox.querySelector('.slider');
-        var titleElement = answerBox.querySelector('.article-title');
-        var markerElement = answerBox.querySelector('.fixed-marker');
+            function submitScore() {
+                var clickedButton = event.target;
+                var votes = parseInt(clickedButton.dataset.votes);
+                var answerBox = clickedButton.closest('.record-box');
+                var slider = answerBox.querySelector('.slider');
+                var titleElement = answerBox.querySelector('.article-title');
+                var markerElement = answerBox.querySelector('.fixed-marker');
 
-        var score = parseFloat(slider.value);
-        var title = titleElement.innerText;
-        var markerStyle = markerElement.style.left;
-        var marker = parseFloat(markerStyle.replace('left: ', '').replace('%;', ''));
+                var score = parseFloat(slider.value);
+                var title = titleElement.innerText;
+                var markerStyle = markerElement.style.left;
+                var marker = parseFloat(markerStyle.replace('left: ', '').replace('%;', ''));
 
-        score = mapValue(score, 0, 100, -1, 1);
-        marker = mapValue(marker, 0, 100, -1, 1);
+                score = mapValue(score, 0, 100, -1, 1);
+                marker = mapValue(marker, 0, 100, -1, 1);
 
-        answerBox.innerHTML = `<div class="center"><h3>Thank you for your response</h3>
+                answerBox.innerHTML = `<div class="center"><h3>Thank you for your response</h3>
         <img class = "check" src="{{ url_for('static', filename='images/check_mark.png')}}"> </div>`;
-        fetch('/update-score', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user_score: score, current_score: marker, title: title, votes: votes }),
-        }).catch(error => {
-          console.error('Error', error)
-        })
-      }
+                fetch('/update-score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_score: score,
+                        current_score: marker,
+                        title: title,
+                        votes: votes
+                    }),
+                }).catch(error => {
+                    console.error('Error', error)
+                })
+            }
 
-      function sendFocus() {
-        document.getElementById('filter-text-val').focus()
-      }
+            function sendFocus() {
+                document.getElementById('filter-text-val').focus()
+            }
 
-      function showDescription() {
-        document.getElementById('description-text').style.display = 'block';
-      }
+            function showDescription() {
+                document.getElementById('description-text').style.display = 'block';
+            }
 
-      function hideDescription() {
-        document.getElementById('description-text').style.display = 'none';
-      }
+            function hideDescription() {
+                document.getElementById('description-text').style.display = 'none';
+            }
 
-      function sendFocus() {
-        document.getElementById('filter-text-val').focus();
-      }
+            function sendFocus() {
+                document.getElementById('filter-text-val').focus();
+            }
 
-      function filterText() {
-        var line = document.getElementById("line");
-        line.classList.add('expand-animation');
-        document.getElementById("left-answer-box").innerHTML = "";
-        document.getElementById("right-answer-box").innerHTML = "";
-        document.getElementById("middle-answer-box").innerHTML = "";
-        //document.getElementById("middle-answer-box").innerHTML = "";
-        console.log(document.getElementById("filter-text-val").value);
-        fetch("/articles?" + new URLSearchParams({ title: document.getElementById("filter-text-val").value }).toString())
-          .then((response) => response.json())
-          .then((data) => {
-            processArticles(data);
-            toggleFeedbackMode();
-            //showWhiteBar();
-          });
-        document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
-      }
+            function filterText() {
+                var line = document.getElementById("line");
+                line.classList.add('expand-animation');
+                document.getElementById("left-answer-box").innerHTML = "";
+                document.getElementById("right-answer-box").innerHTML = "";
+                document.getElementById("middle-answer-box").innerHTML = "";
+                var check = document.getElementById('lean-mode-checkbox');
+                //document.getElementById("middle-answer-box").innerHTML = "";
+                console.log(document.getElementById("filter-text-val").value);
+                fetch("/articles?" + new URLSearchParams({
+                        title: document.getElementById("filter-text-val").value
+                    }).toString())
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (check.checked) {
+                            processArticlesByLean(data);
+                            toggleFeedbackMode();
+                        } else {
+                            processArticles(data);
+                            toggleFeedbackMode();
+                        }
+                    });
+                document.querySelector('.center-banner').setAttribute('src', "{{ url_for('static', filename='images/newlogonoL.png') }}");
+            }
 
-      function showWhiteBar() {
-        var whiteBar = document.querySelector('body::after');
-        whiteBar.style.display = 'block';
-      }
+            function showWhiteBar() {
+                var whiteBar = document.querySelector('body::after');
+                whiteBar.style.display = 'block';
+            }
 
-      function showWhiteBar() {
-        var whiteBar = document.querySelector('body::after');
-        whiteBar.style.display = 'block';
-      }
+            function showWhiteBar() {
+                var whiteBar = document.querySelector('body::after');
+                whiteBar.style.display = 'block';
+            }
 
-      function processArticles(data) {
-        processFirstItem(JSON.parse(data[0]));
-        processSecondItem(JSON.parse(data[1]));
-        processThirdItem(JSON.parse(data[2]));
-        //processFourthItem(JSON.parse(data[3]));
-      }
+            function processArticles(data) {
+                processFirstItem(JSON.parse(data[0]));
+                processSecondItem(JSON.parse(data[1]));
+                processThirdItem(JSON.parse(data[2]));
+                //processFourthItem(JSON.parse(data[3]));
+            }
 
-      function processFirstItem(leftlist) {
-        // Left biased articles
-        leftlist.forEach((json) => {
-          console.log(json)
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
-          document.getElementById("left-answer-box").appendChild(tempDiv);
-        });
-      }
+            function processArticlesByLean(data) {
+                left = JSON.parse(data[0]);
+                left.sort((a, b) => a.score - b.score);
+                processFirstItem(left);
 
-      function processSecondItem(rightlist) {
-        // Right biased articles
-        rightlist.forEach((json) => {
-          console.log(json)
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
-          document.getElementById("right-answer-box").appendChild(tempDiv);
-        });
-      }
+                right = JSON.parse(data[1]);
+                right.sort((a, b) => b.score - a.score);
+                processSecondItem(right);
 
-      function processThirdItem(middlelist) {
-        // Unbiased articles
-        middlelist.forEach((json) => {
-          console.log(json)
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
-          document.getElementById("middle-answer-box").appendChild(tempDiv);
-        });
-      }
+                center = JSON.parse(data[2]);
+                center.sort((a, b) => b.score - a.score);
+                processThirdItem(center);
+            }
 
-      function processFourthItem(alllist) {
-        console.log("row type: " + typeof alllist);
-        console.log("row: " + alllist)
-        alllist.forEach((json) => {
-          console.log(json)
-          let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
-          document.getElementById("answer-box").appendChild(tempDiv);
-        });
-      }
 
-      var descriptionText = document.getElementById('description-text');
-      var helpButton = document.getElementById('help-button');
+            function processFirstItem(leftlist) {
+                // Left biased articles
+                console.log(leftlist.length)
+                leftlist.forEach((json) => {
+                    //console.log(json)
+                    let tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+                    document.getElementById("left-answer-box").appendChild(tempDiv);
+                });
+            }
 
-      // Show description when mouse enters help button or description box
-      helpButton.addEventListener('mouseover', function () {
-        descriptionText.style.display = 'block';
-      });
+            function processSecondItem(rightlist) {
+                console.log(rightlist.length)
+                    // Right biased articles
+                rightlist.forEach((json) => {
+                    //console.log(json)
+                    let tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+                    document.getElementById("right-answer-box").appendChild(tempDiv);
+                });
+            }
 
-      descriptionText.addEventListener('mouseover', function () {
-        descriptionText.style.display = 'block';
-      });
+            function processThirdItem(middlelist) {
+                console.log(middlelist.length)
+                    // Unbiased articles
+                middlelist.forEach((json) => {
+                    //console.log(json)
+                    let tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+                    document.getElementById("middle-answer-box").appendChild(tempDiv);
+                });
+            }
 
-      // Hide description when mouse leaves help button or description box
-      helpButton.addEventListener('mouseleave', function () {
-        descriptionText.style.display = 'none';
-      });
+            function processFourthItem(alllist) {
+                //console.log("row type: " + typeof alllist);
+                //console.log("row: " + alllist)
+                alllist.forEach((json) => {
+                    //console.log(json)
+                    let tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+                    document.getElementById("answer-box").appendChild(tempDiv);
+                });
+            }
 
-      descriptionText.addEventListener('mouseleave', function (event) {
-        // Check if the mouse is not over the help button when leaving the description box
-        if (!helpButton.contains(event.relatedTarget)) {
-          descriptionText.style.display = 'none';
-        }
-      });
+            var descriptionText = document.getElementById('description-text');
+            var helpButton = document.getElementById('help-button');
 
-      // Function to toggle feedback mode based on checkbox state
-      function toggleFeedbackMode() {
-        var feedbackModeCheckbox = document.getElementById('feedback-mode-checkbox');
-        var recordBoxes = document.querySelectorAll('.record-box-overlay');
+            // Show description when mouse enters help button or description box
+            helpButton.addEventListener('mouseover', function() {
+                descriptionText.style.display = 'block';
+            });
 
-        if (feedbackModeCheckbox.checked) {
-          // Enable feedback mode
-          recordBoxes.forEach(box => {
-            box.addEventListener('mouseenter', enableFeedback);
-            box.addEventListener('mouseleave', disableFeedback);
-          });
-        } else {
-          // Disable feedback mode
-          recordBoxes.forEach(box => {
-            box.removeEventListener('mouseenter', enableFeedback);
-            box.removeEventListener('mouseleave', disableFeedback);
-          });
-        }
-      }
+            descriptionText.addEventListener('mouseover', function() {
+                descriptionText.style.display = 'block';
+            });
 
-      // Function to enable feedback mode on mouse enter
-      function enableFeedback() {
-        this.querySelector('.slider-container').style.display = 'block';
-      }
+            // Hide description when mouse leaves help button or description box
+            helpButton.addEventListener('mouseleave', function() {
+                descriptionText.style.display = 'none';
+            });
 
-      // Function to disable feedback mode on mouse leave
-      function disableFeedback() {
-        this.querySelector('.slider-container').style.display = 'none';
-      }
+            descriptionText.addEventListener('mouseleave', function(event) {
+                // Check if the mouse is not over the help button when leaving the description box
+                if (!helpButton.contains(event.relatedTarget)) {
+                    descriptionText.style.display = 'none';
+                }
+            });
 
-      // Event listener for checkbox change
-      document.getElementById('feedback-mode-checkbox').addEventListener('change', toggleFeedbackMode);
+            // Function to toggle feedback mode based on checkbox state
+            function toggleFeedbackMode() {
+                var feedbackModeCheckbox = document.getElementById('feedback-mode-checkbox');
+                var recordBoxes = document.querySelectorAll('.record-box-overlay');
 
-    </script>
-  </main>
+                if (feedbackModeCheckbox.checked) {
+                    // Enable feedback mode
+                    recordBoxes.forEach(box => {
+                        box.addEventListener('mouseenter', enableFeedback);
+                        box.addEventListener('mouseleave', disableFeedback);
+                    });
+                } else {
+                    // Disable feedback mode
+                    recordBoxes.forEach(box => {
+                        box.removeEventListener('mouseenter', enableFeedback);
+                        box.removeEventListener('mouseleave', disableFeedback);
+                    });
+                }
+            }
+
+            // Function to enable feedback mode on mouse enter
+            function enableFeedback() {
+                this.querySelector('.slider-container').style.display = 'block';
+            }
+
+            // Function to disable feedback mode on mouse leave
+            function disableFeedback() {
+                this.querySelector('.slider-container').style.display = 'none';
+            }
+
+            // Event listener for checkbox change
+            document.getElementById('feedback-mode-checkbox').addEventListener('change', toggleFeedbackMode);
+        </script>
+    </main>
 
 </body>
