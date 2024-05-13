@@ -337,6 +337,14 @@
         })
       }
 
+      function showModal(title) {
+        document.getElementById(title).showModal();
+      }
+
+      function closeModal(title) {
+        document.getElementById(title).close();
+      }
+
       function sendFocus() {
         document.getElementById('filter-text-val').focus()
       }
@@ -416,7 +424,7 @@
         leftlist.forEach((json) => {
           //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
           document.getElementById("left-answer-box").appendChild(tempDiv);
         });
       }
@@ -427,7 +435,7 @@
         rightlist.forEach((json) => {
           //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
           document.getElementById("right-answer-box").appendChild(tempDiv);
         });
       }
@@ -438,7 +446,7 @@
         middlelist.forEach((json) => {
           //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+          tempDiv.innerHTML = middleAnswerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
           document.getElementById("middle-answer-box").appendChild(tempDiv);
         });
       }
@@ -449,7 +457,7 @@
         alllist.forEach((json) => {
           //console.log(json)
           let tempDiv = document.createElement("div");
-          tempDiv.innerHTML = answerBoxTemplate(json.title, (json.text.substring(0, 200) + "..."), json.score, json.url, json.date, json.votes);
+          tempDiv.innerHTML = answerBoxTemplate(json.title, json.text, json.score, json.url, json.date, json.votes, json.relevant_sentences);
           document.getElementById("answer-box").appendChild(tempDiv);
         });
       }
