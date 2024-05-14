@@ -38,6 +38,12 @@ p {
   border-radius: 50%;
   border-color: black;
   margin-top: 0px;
+  float: right;
+  margin-bottom: 5px;
+}
+
+.button-buffer {
+  padding-bottom: 10px;
 }
 
 .open-button:hover {

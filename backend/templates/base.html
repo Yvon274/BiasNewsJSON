@@ -253,12 +253,12 @@
             </div>
             <div class = "button"><button class="button close-button" onclick='closeModal("${title.replace(/['"]/g, '')}")'>Close</button></div>
               </dialog>
-            <button class="open-button" onclick='showModal("${title.replace(/['"]/g, '')}")'  style='background: ${color}'>?</button>
             <a class="link" href="${url}" target="_blank">
               <h3 id="title2" class='article-title'>${title}</h3>
             </a>
             <p class="date">${newdate}</p>
             <div class="score">Political leaning score: ${absrating}</div>
+            <div class="button-buffer"><button class="open-button" onclick='showModal("${title.replace(/['"]/g, '')}")'  style='background: ${color}'>?</button></div>
               <div class='slider-container'>
                 <h4>Add your own rating of this article!</h4>
                 <div class="center">
