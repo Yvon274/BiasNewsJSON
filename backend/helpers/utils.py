@@ -2,6 +2,7 @@ import numpy as np
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.decomposition import TruncatedSVD
 from rapidfuzz import process, fuzz
 from nltk.stem import SnowballStemmer
 
@@ -109,62 +110,39 @@ class QueryChecker:
         self.article_url_to_name = {v: k for k,
                                     v in self.article_name_to_url.items()}
 
-    # def get_most_similar(self, query, data):
-    #     """Returns a float giving the cosine similarity of
-    #        the two movie transcripts.
-    #
-    #     Params: {query: query in string form.
-    #              mov2 (str): Name of the article.
-    #              input_doc_mat (numpy.ndarray): Term-document matrix of articles, where
-    #                     each row represents a document (movie transcript) and each column represents a term.
-    #              movie_name_to_index (dict): Dictionary that maps movie names to the corresponding row index
-    #                     in the term-document matrix.}
-    #     Returns: Float (Cosine similarity of the two movie transcripts.)
-    #     """
-    #     self.data = data
-    #
-    #     vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
-    #     corpus = self.data['text'].str.lower()
-    #
-    #
-    #     tfidf_matrix = vectorizer.fit_transform(corpus)
-    #
-    #     query_tfidf = vectorizer.transform([query])
-    #
-    #     cosine_similarities = cosine_similarity(query_tfidf, tfidf_matrix).flatten()
-    #
-    #     top_50_indices = np.argsort(cosine_similarities)[-50:][::-1]
-    #
-    #
-    #     return top_50_indices
-
     def get_sim_score_order(self, query, data):
         self.data = data
 
         vectorizer = self.build_vectorizer(QueryChecker.n_feats, 'english')
         corpus = self.data['text'].str.lower()
 
-        words_list = [word.lower()
-                      for name in corpus for word in name.split() if len(word) >= 3]
+        words_list = [word.lower() for name in corpus for word in name.split() if len(word) >= 3]
         vocab = set(words_list)
 
         # FILTER QUERY SO THAT IT ONLY INCLUDES TERMS IN THE DOCUMENTS
         stemmed_query = self.stem_query(query)
         filtered_query = ''
         for word in stemmed_query.split(' '):
-            filtered_query += process.extractOne(word, vocab)[0] + ' '
+            match = process.extractOne(word, vocab)
+            if match and match[1] > 0:
+                filtered_query += match[0] + ' '
         filtered_query = filtered_query.strip()
 
         tfidf_matrix = vectorizer.fit_transform(corpus)
-
-        print(filtered_query)
+        svd = TruncatedSVD(n_components=100)
+        tfidf_matrix_svd = svd.fit_transform(tfidf_matrix)
 
         query_tfidf = vectorizer.transform([filtered_query])
+        query_tfidf_svd = svd.transform(query_tfidf)
 
-        cosine_similarities = cosine_similarity(
-            query_tfidf, tfidf_matrix).flatten()
+        cosine_similarities = cosine_similarity(query_tfidf_svd, tfidf_matrix_svd).flatten()
 
-        return np.argsort(cosine_similarities)
+        sum_scores = cosine_similarities + np.sum(cosine_similarities)
+
+        non_zero_indices = np.where((cosine_similarities > 0) & (cosine_similarities >= 0.1))[0]
+        sorted_indices = np.argsort(sum_scores[non_zero_indices])
+
+        return non_zero_indices[sorted_indices]
 
     def get_most_similar_by_category(self, query, data, num_articles = 75):
         order = self.get_sim_score_order(query, data)[::-1]
@@ -177,23 +155,20 @@ class QueryChecker:
 
 
         i = 0
-        while i < len(ordered_data) and (len(top_left_ind) < 75 or len(top_right_ind) < 75 or len(top_med_ind) < 75):
+        while i < len(ordered_data) and (len(top_left_ind) < num_articles or len(top_right_ind) < num_articles or len(top_med_ind) < num_articles):
             entry = ordered_data.iloc[i]
-            if entry['score'] < -0.1 and len(top_left_ind) < 75:
+            if entry['score'] < -0.05 and len(top_left_ind) < num_articles:
                 top_left_ind.append(order[i])
-            elif entry['score'] > 0.1 and len(top_right_ind) < 75:
+            elif entry['score'] > 0.05 and len(top_right_ind) < num_articles:
                 top_right_ind.append(order[i])
-            elif len(top_med_ind) < 75:
+            elif len(top_med_ind) < num_articles:
                 top_med_ind.append(order[i])
 
-            if len(top_ind) < 75:
+            if len(top_ind) < num_articles:
                 top_ind.append(order[i])
 
             i += 1
         return top_left_ind, top_right_ind, top_med_ind, top_ind
-
-
-
 
     def get_most_similar(self, query, data):
         """
