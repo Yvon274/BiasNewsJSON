@@ -137,10 +137,8 @@ class QueryChecker:
 
         cosine_similarities = cosine_similarity(query_tfidf_svd, tfidf_matrix_svd).flatten()
 
-        sum_scores = cosine_similarities + np.sum(cosine_similarities)
-
-        non_zero_indices = np.where((cosine_similarities > 0) & (cosine_similarities >= 0.1))[0]
-        sorted_indices = np.argsort(sum_scores[non_zero_indices])
+        non_zero_indices = np.where(cosine_similarities >= 0.1)[0]
+        sorted_indices = np.argsort(cosine_similarities[non_zero_indices])
 
         return non_zero_indices[sorted_indices]
 
